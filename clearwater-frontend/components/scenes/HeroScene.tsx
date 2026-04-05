@@ -3,6 +3,12 @@
 import { useEffect, useRef } from 'react';
 import { gsap } from '../../lib/gsap';
 
+const prompts = [
+  '/recover reef pigments',
+  '/lift abyss detail',
+  '/restore diver silhouette',
+];
+
 export default function HeroScene() {
   const compRef = useRef<HTMLElement>(null);
   const leftRef = useRef<HTMLDivElement>(null);
@@ -11,23 +17,52 @@ export default function HeroScene() {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const bodyRef = useRef<HTMLParagraphElement>(null);
   const creditsRef = useRef<HTMLDivElement>(null);
+  const promptsRef = useRef<HTMLButtonElement[]>([]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Set initial state
       if (eyebrowRef.current) gsap.set(eyebrowRef.current, { y: 24 });
       if (headingRef.current) gsap.set(headingRef.current, { y: 24 });
+      if (bodyRef.current) gsap.set(bodyRef.current, { y: 24 });
+      if (creditsRef.current) gsap.set(creditsRef.current, { y: 24 });
+      if (promptsRef.current.length) gsap.set(promptsRef.current, { y: 16, opacity: 0 });
+      if (rightRef.current) gsap.set(rightRef.current, { x: 32, scale: 1, filter: 'blur(0px) brightness(1)' });
 
-      // ── ENTER ANIMATIONS (trigger-based, one-shot) ──
+      const headingFloat = headingRef.current ? gsap.to(headingRef.current, {
+        y: -5,
+        duration: 2.6,
+        ease: 'sine.inOut',
+        repeat: -1,
+        yoyo: true,
+        paused: true,
+      }) : null;
+
       const heroTrig = { trigger: compRef.current, start: 'top 72%' };
 
       gsap.to(eyebrowRef.current, { opacity: 1, y: 0, duration: 0.7, scrollTrigger: heroTrig });
-      gsap.to(headingRef.current, { opacity: 1, y: 0, duration: 0.9, delay: 0.15, scrollTrigger: heroTrig });
-      gsap.to(bodyRef.current, { opacity: 1, duration: 0.8, delay: 0.35, scrollTrigger: heroTrig });
-      gsap.to(creditsRef.current, { opacity: 1, duration: 0.8, delay: 0.55, scrollTrigger: heroTrig });
+      gsap.to(headingRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.9,
+        delay: 0.15,
+        scrollTrigger: heroTrig,
+        onComplete: () => {
+          headingFloat?.play();
+        },
+      });
+      gsap.to(bodyRef.current, { opacity: 1, y: 0, duration: 0.8, delay: 0.35, scrollTrigger: heroTrig });
+      gsap.to(creditsRef.current, { opacity: 1, y: 0, duration: 0.8, delay: 0.55, scrollTrigger: heroTrig });
+      gsap.to(promptsRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        stagger: 0.08,
+        delay: 0.6,
+        ease: 'power3.out',
+        scrollTrigger: heroTrig,
+      });
       gsap.to(rightRef.current, { opacity: 1, x: 0, duration: 1.1, delay: 0.25, scrollTrigger: heroTrig });
 
-      // ── CINEMATIC CONTROL LAYER (scroll-scrubbed) ──
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: compRef.current,
@@ -37,45 +72,40 @@ export default function HeroScene() {
         },
       });
 
-      // 1. DEPTH ZOOM — camera slowly pushing forward
       tl.to(compRef.current, {
-        scale: 1.08,
+        scale: 1.05,
         ease: 'none',
       }, 0);
 
-      // 2. FOCUS PULL — background blurs, foreground stays sharp
       tl.to(rightRef.current, {
-        filter: 'blur(5px)',
+        filter: 'blur(3.5px) brightness(0.92) saturate(0.9)',
+        scale: 1.06,
         ease: 'none',
-      }, 0.1);
+      }, 0.08);
 
-      // 3. FOREGROUND PRIORITY — text floats upward into focus
       tl.to(leftRef.current, {
-        y: -40,
+        y: -30,
         ease: 'none',
       }, 0);
 
-      // 4. BACKGROUND PARALLAX — right side moves slower
       tl.to(rightRef.current, {
-        y: '-8%',
+        y: '-6%',
         ease: 'none',
       }, 0);
-
-      // 5. CONTRAST CONTROL — underwater depth pressure
-      tl.to(compRef.current, {
-        filter: 'brightness(0.88) saturate(0.92)',
-        ease: 'none',
-      }, 0.3);
-
     }, compRef);
 
     return () => ctx.revert();
   }, []);
 
+  const scrollToLab = () => {
+    const labSection = document.getElementById('lab-section');
+    labSection?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
-    <section className="hero-section" ref={compRef}>
+    <section className="hero-section" ref={compRef} id="hero-section">
       <div className="hero-left" ref={leftRef}>
-        <p className="eyebrow" ref={eyebrowRef}>Project &mdash; 2026</p>
+        <p className="eyebrow" ref={eyebrowRef}>Project - 2026</p>
         <h2 className="hero-h" ref={headingRef}>The ocean holds<br />secrets. <em>We restore</em><br />what was lost.</h2>
         <p className="hero-body" ref={bodyRef}>A hybrid deep-learning system combining Dark Channel Prior physics modeling with a custom U-Net architecture to restore clarity, color, and detail from degraded underwater imagery.</p>
         <div className="hero-credits" ref={creditsRef}>
@@ -85,28 +115,45 @@ export default function HeroScene() {
           </div>
           <div className="credit">
             <span className="credit-lbl">Backend</span>
-            <span className="credit-val">FastAPI · Python</span>
+            <span className="credit-val">FastAPI - Python</span>
           </div>
           <div className="credit">
             <span className="credit-lbl">Model</span>
             <span className="credit-val">DCP + U-Net</span>
           </div>
         </div>
+        <div className="hero-prompts">
+          {prompts.map((prompt, index) => (
+            <button
+              key={prompt}
+              type="button"
+              className="hero-chip"
+              ref={(element) => {
+                if (element) {
+                  promptsRef.current[index] = element;
+                }
+              }}
+              onClick={scrollToLab}
+            >
+              {prompt}
+            </button>
+          ))}
+        </div>
       </div>
       <div className="hero-right" ref={rightRef}>
-        <div className="ring r1"></div>
-        <div className="ring r2"></div>
-        <div className="ring r3"></div>
-        <div className="crosshair"></div>
-        <div className="dot d1"></div>
-        <div className="dot d2"></div>
-        <div className="dot d3"></div>
+        <div className="ring r1" />
+        <div className="ring r2" />
+        <div className="ring r3" />
+        <div className="crosshair" />
+        <div className="dot d1" />
+        <div className="dot d2" />
+        <div className="dot d3" />
         <div className="stat s1">
           <span className="stat-n">6ch</span>
           <span className="stat-l">Feature fusion</span>
         </div>
         <div className="stat s2">
-          <span className="stat-n">512²</span>
+          <span className="stat-n">512x512</span>
           <span className="stat-l">Input resolution</span>
         </div>
       </div>

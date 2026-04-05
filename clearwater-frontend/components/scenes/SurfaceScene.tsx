@@ -20,46 +20,41 @@ export default function SurfaceScene() {
         },
       });
 
-      // 🌊 surface movement
       tl.to(compRef.current, {
-        scale: 1.1,
-        skewY: 2,
-        filter: "blur(10px)",
+        scale: 1.05,
+        skewY: 1,
+        yPercent: 4,
+        filter: "blur(4px) brightness(0.97)",
+        ease: "none",
       }, 0);
 
-      // 🌊 dive darkness
       tl.to(overlayRef.current, {
-        opacity: 1,
-      }, 0.3);
+        opacity: 0.72,
+        ease: "none",
+      }, 0.28);
 
-      // 🌊 continuous ripple pulse
+      tl.to(shimmerRef.current, {
+        opacity: 0.12,
+        ease: "none",
+      }, 0.05);
+
       gsap.to(shimmerRef.current, {
         backgroundPosition: "200% 0",
         repeat: -1,
-        duration: 6,
+        duration: 7,
         ease: "linear",
       });
-
     }, compRef);
 
     return () => ctx.revert();
   }, []);
 
   return (
-    <section ref={compRef} className="surface-scene-v2">
-      {/* 🌊 light shimmer */}
+    <section ref={compRef} className="surface-scene-v2" id="surface-section">
       <div ref={shimmerRef} className="surface-light-shimmer" />
-
-      {/* 🌊 water distortion layer */}
       <div className="surface-water-distort" />
-
-      {/* 🌊 dark dive overlay */}
       <div ref={overlayRef} className="surface-dark-overlay" />
-
-      {/* 🌊 title */}
-      <div className="surface-title">
-        Surface
-      </div>
+      <div className="surface-title">Surface</div>
     </section>
   );
 }

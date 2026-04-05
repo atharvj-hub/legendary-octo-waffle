@@ -1,3 +1,4 @@
+import CampaignRail from '../components/CampaignRail';
 import SurfaceScene from '../components/scenes/SurfaceScene';
 import IntroScene from '../components/scenes/IntroScene';
 import HeroScene from '../components/scenes/HeroScene';
@@ -8,6 +9,7 @@ import LabScene from '../components/scenes/LabScene';
 export default function Home() {
   return (
     <main>
+      <CampaignRail />
       <SurfaceScene />
       <IntroScene />
       <HeroScene />

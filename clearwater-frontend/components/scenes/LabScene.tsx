@@ -14,6 +14,7 @@ export default function LabScene() {
       <div className="lab-hdr">
         <div className="lab-ey">Clearwater Lab</div>
         <h2 className="lab-ttl">Restoration Studio</h2>
+        <p className="lab-sub">Choose a frame, guide the restoration, and preview how the water lifts away.</p>
       </div>
       <div className="lab-wrap">
         {labState === 'upload' && <UploadZone />}
