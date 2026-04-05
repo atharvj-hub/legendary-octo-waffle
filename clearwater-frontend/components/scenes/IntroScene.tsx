@@ -1,55 +1,89 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
+import { useEffect, useRef } from "react";
+import { gsap } from "../../lib/gsap";
 
 export default function IntroScene() {
   const compRef = useRef<HTMLDivElement>(null);
-  
+
+  const gridRef = useRef<HTMLDivElement>(null);
+  const cornersRef = useRef<HTMLDivElement[]>([]);
+  const labelRef = useRef<HTMLDivElement>(null);
+  const charsRef = useRef<HTMLSpanElement[]>([]);
+  const subRef = useRef<HTMLParagraphElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
-      tl.to('.grid-bg',    { opacity: 1,    duration: 1.6 }, 0.2)
-        .to('.corner', { opacity: 1, duration: 0.6, stagger: 0.12 }, 0.6)
-        .to('.intro-label',  { opacity: 1,    duration: 0.7 }, 1.0)
-        .to('.char',      { y: 0, opacity: 1, duration: 0.95, stagger: 0.055 }, 1.4)
-        .to('.intro-sub',  { opacity: 1,    duration: 0.8 }, 2.3)
-        .to('.scroll-hint',{ opacity: 1,    duration: 0.6 }, 2.9)
-        .to('nav',       { opacity: 1,    duration: 0.6 }, 3.0);
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: compRef.current,
+          start: "top top",
+          end: "+=100%",
+          scrub: true,
+        },
+      });
+
+      tl.to(gridRef.current, { opacity: 1, duration: 1.6 }, 0)
+        .to(cornersRef.current, {
+          opacity: 1,
+          duration: 0.6,
+          stagger: 0.12,
+        }, 0.3)
+        .to(labelRef.current, { opacity: 1 }, 0.5)
+        .to(charsRef.current, {
+          y: 0,
+          opacity: 1,
+          stagger: 0.05,
+        }, 0.7)
+        .to(subRef.current, { opacity: 1 }, 1.0)
+        .to(scrollRef.current, { opacity: 1 }, 1.2);
+
     }, compRef);
-    
+
     return () => ctx.revert();
   }, []);
 
   return (
-    <div ref={compRef}>
-      <nav>
-        <span className="nav-logo">CLEARWATER</span>
-        <span className="nav-tag">Underwater Vision</span>
-      </nav>
-      
-      <section className="intro-section">
-        <div className="grid-bg"></div>
-        <div className="corner c-tl"></div>
-        <div className="corner c-tr"></div>
-        <div className="corner c-bl"></div>
-        <div className="corner c-br"></div>
+    <section ref={compRef} className="intro-section">
 
-        <div className="intro-inner">
-          <div className="intro-label">Clearwater &mdash; v1.0 &nbsp;&bull;&nbsp; 2026</div>
-          <h1 className="intro-title">
-            {'CLEARWATER'.split('').map((char, i) => (
-              <span key={i} className="char">{char}</span>
-            ))}
-          </h1>
-          <p className="intro-sub">Underwater Image Restoration &amp; Enhancement</p>
+      <div ref={gridRef} className="grid-bg"></div>
+
+      {["c-tl", "c-tr", "c-bl", "c-br"].map((cls, i) => (
+        <div
+          key={cls}
+          ref={(el) => { if (el) cornersRef.current[i] = el; }}
+          className={`corner ${cls}`}
+        />
+      ))}
+
+      <div className="intro-inner">
+        <div ref={labelRef} className="intro-label">
+          Clearwater — v1.0 • 2026
         </div>
 
-        <div className="scroll-hint">
-          <div className="scroll-line"></div>
-          <span>Scroll</span>
-        </div>
-      </section>
-    </div>
+        <h1 className="intro-title">
+          {"CLEARWATER".split("").map((char, i) => (
+            <span
+              key={i}
+              ref={(el) => { if (el) charsRef.current[i] = el; }}
+              className="char"
+            >
+              {char}
+            </span>
+          ))}
+        </h1>
+
+        <p ref={subRef} className="intro-sub">
+          Underwater Image Restoration & Enhancement
+        </p>
+      </div>
+
+      <div ref={scrollRef} className="scroll-hint">
+        <div className="scroll-line"></div>
+        <span>Scroll</span>
+      </div>
+
+    </section>
   );
 }

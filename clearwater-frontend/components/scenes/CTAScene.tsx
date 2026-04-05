@@ -1,16 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { gsap } from '../../lib/gsap';
 
 export default function CTAScene() {
   const compRef = useRef<HTMLDivElement>(null);
   const [ripples, setRipples] = useState<{id: number, top: number, left: number}[]>([]);
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-
     const ctx = gsap.context(() => {
       const ctaTrig = { trigger: '.cta-section', start: 'top 70%' };
       gsap.to('.cta-lbl',  { opacity: 1, duration: 0.6, scrollTrigger: ctaTrig });
