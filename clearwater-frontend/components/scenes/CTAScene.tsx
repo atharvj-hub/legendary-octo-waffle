@@ -9,9 +9,9 @@ export default function CTAScene() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const ctaTrig = { trigger: '.cta-section', start: 'top 70%' };
+      const ctaTrig = { trigger: compRef.current, start: 'top 70%' };
       gsap.to('.cta-lbl',  { opacity: 1, duration: 0.6, scrollTrigger: ctaTrig });
-      gsap.to('.enter-btn',{ opacity: 1, duration: 0.8, delay: 0.22, scrollTrigger: ctaTrig });
+      gsap.to('.enter-btn',{ opacity: 1, duration: 0.8, delay: 0.35, scrollTrigger: ctaTrig });
     }, compRef);
 
     return () => ctx.revert();

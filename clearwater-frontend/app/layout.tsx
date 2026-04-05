@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Cormorant_Garamond, JetBrains_Mono, DM_Sans } from 'next/font/google';
 import './globals.css';
 import Nav from '../components/Nav';
+import SmoothScroll from '../components/SmoothScroll';
 
 const cormorant = Cormorant_Garamond({ subsets: ['latin'], weight: ['300', '400', '600'], variable: '--fd' });
 const jetbrains = JetBrains_Mono({ subsets: ['latin'], weight: ['300', '400'], variable: '--fm' });
@@ -20,8 +21,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${cormorant.variable} ${jetbrains.variable} ${dmSans.variable}`}>
-        <Nav />
-        {children}
+        <SmoothScroll>
+          <Nav />
+          {children}
+        </SmoothScroll>
       </body>
     </html>
   );

@@ -8,11 +8,11 @@ export default function CardsScene() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const cards = gsap.utils.toArray('.card');
-      cards.forEach((card: any, i) => {
+      const cards = gsap.utils.toArray('.card') as HTMLElement[];
+      cards.forEach((card, i) => {
         gsap.to(card, {
           opacity: 1, y: 0, duration: 0.75, delay: i * 0.14,
-          scrollTrigger: { trigger: '.cards-section', start: 'top 72%' }
+          scrollTrigger: { trigger: compRef.current, start: 'top 72%' }
         });
       });
     }, compRef);

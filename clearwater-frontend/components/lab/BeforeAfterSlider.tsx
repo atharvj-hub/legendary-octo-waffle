@@ -34,7 +34,7 @@ export default function BeforeAfterSlider() {
       document.removeEventListener('touchend', handleTouchEnd);
       document.removeEventListener('touchmove', handleTouchMove);
     };
-  }, [dragging]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [dragging]);
 
   return (
     <div className="result-z" style={{ display: 'block' }}>

@@ -5,10 +5,21 @@ import { gsap } from '../lib/gsap';
 
 export default function Nav() {
   const navRef = useRef<HTMLElement>(null);
-  
+
   useEffect(() => {
-    // Fade in nav after 1.5s to compensate for the removed timeline load animation
-    gsap.to(navRef.current, { opacity: 1, duration: 0.6, delay: 1.5, ease: 'power4.out' });
+    const ctx = gsap.context(() => {
+      gsap.to(navRef.current, {
+        opacity: 1,
+        scrollTrigger: {
+          trigger: ".intro-section",
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+    }, navRef);
+
+    return () => ctx.revert();
   }, []);
 
   return (
