@@ -37,45 +37,7 @@ export default function CardsScene() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.set(copyRef.current, { y: 36, opacity: 0 });
-      gsap.set(cardRefs.current, { y: 80, opacity: 0, scale: 0.96, rotateX: 8 });
-
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: compRef.current,
-          start: 'top 68%',
-          end: 'bottom 45%',
-          scrub: 0.8,
-        },
-      });
-
-      tl.to(copyRef.current, {
-        y: 0,
-        opacity: 1,
-        ease: 'power2.out',
-      }, 0);
-
-      tl.to(cardRefs.current, {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        rotateX: 0,
-        stagger: 0.12,
-        ease: 'power3.out',
-      }, 0.08);
-
-      cardRefs.current.forEach((card, index) => {
-        gsap.to(card, {
-          yPercent: -6 - index * 2,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: compRef.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: true,
-          },
-        });
-      });
+      gsap.set(cardRefs.current, { scale: 0.96, rotateX: 8 });
     }, compRef);
 
     return () => ctx.revert();
@@ -105,7 +67,7 @@ export default function CardsScene() {
 
   return (
     <section className="cards-section" ref={compRef} id="cards-section">
-      <div className="cards-copy" ref={copyRef}>
+      <div className="cards-copy" ref={copyRef} data-depth="foreground">
         <p className="cards-eyebrow">Dive protocol</p>
         <h2 className="cards-title">A restoration pipeline that behaves like an expedition.</h2>
         <p className="cards-body">Each chapter moves deeper into the image: physics for water behavior, learning for scene understanding, and fusion for a premium final frame.</p>
@@ -123,6 +85,7 @@ export default function CardsScene() {
             onMouseMove={handleMove}
             onMouseLeave={resetTilt}
             style={{ '--mx': '50%', '--my': '50%', '--rx': '0deg', '--ry': '0deg' } as CSSProperties}
+            data-depth={index === 1 ? 'foreground' : 'mid'}
           >
             <Image
               src={card.image.path}

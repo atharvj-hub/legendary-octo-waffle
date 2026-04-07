@@ -27,46 +27,6 @@ export default function SurfaceScene() {
         .to(contentRef.current, { opacity: 1, y: 0, duration: 0.9 }, "-=0.28")
         .to(shimmerRef.current, { opacity: 0.24, duration: 0.7 }, "-=0.55");
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: compRef.current,
-          start: "top top",
-          end: "+=72%",
-          scrub: true,
-          pin: true,
-        },
-      });
-
-      tl.to(surfacePlateRef.current, {
-        scale: 1.1,
-        yPercent: -8,
-        filter: "blur(3px) brightness(0.86) saturate(0.92)",
-        ease: "none",
-      }, 0);
-
-      tl.to(depthPlateRef.current, {
-        opacity: 0.42,
-        scale: 1.02,
-        yPercent: -2,
-        ease: "none",
-      }, 0.04);
-
-      tl.to(overlayRef.current, {
-        opacity: 0.46,
-        ease: "none",
-      }, 0.18);
-
-      tl.to(shimmerRef.current, {
-        opacity: 0.16,
-        ease: "none",
-      }, 0.05);
-
-      tl.to(contentRef.current, {
-        y: -24,
-        opacity: 0.86,
-        ease: "none",
-      }, 0.06);
-
       gsap.to(shimmerRef.current, {
         backgroundPosition: "200% 0",
         repeat: -1,
@@ -88,6 +48,7 @@ export default function SurfaceScene() {
         sizes="100vw"
         className="scene-plate surface-plate"
         ref={surfacePlateRef}
+        data-depth="background"
       />
       <Image
         src={campaignAssets.intro.lightBeam.path}
@@ -96,14 +57,20 @@ export default function SurfaceScene() {
         sizes="100vw"
         className="scene-plate surface-depth-plate"
         ref={depthPlateRef}
+        data-depth="background"
       />
-      <div ref={shimmerRef} className="surface-light-shimmer" />
+      <div ref={shimmerRef} className="surface-light-shimmer" data-depth="mid" />
       <div className="surface-water-distort" />
       <div ref={overlayRef} className="surface-dark-overlay" />
       <div ref={flashRef} className="surface-flash" />
-      <div ref={contentRef} className="surface-cover">
+      <div ref={contentRef} className="surface-cover" data-depth="foreground">
         <p className="surface-kicker">Ocean vision campaign - 2026</p>
-        <h1 className="surface-heading">Clearwater</h1>
+        <h1 className="surface-heading" data-breathe aria-label="Clearwater">
+          <span className="surface-heading-the">The</span>
+          <span className="surface-heading-clear">Clear</span>
+          <em className="surface-heading-water">water</em>
+          <span className="surface-heading-edition">Edition</span>
+        </h1>
         <p className="surface-copy">
           Underwater image restoration and enhancement through physics-guided deep learning.
         </p>
@@ -114,7 +81,7 @@ export default function SurfaceScene() {
           </div>
           <div>
             <dt>Team</dt>
-            <dd>Clearwater research group</dd>
+            <dd>Atharv Jandial, Advitya Sharma, Darsh Dhawan, Divij Singh Soodan</dd>
           </div>
           <div>
             <dt>Flow</dt>

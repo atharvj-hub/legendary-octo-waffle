@@ -22,22 +22,13 @@ export default function CTAScene() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.set([labelRef.current, bodyRef.current, buttonRef.current], { y: 20, opacity: 0 });
-      gsap.set(chipsRef.current, { y: 16, opacity: 0 });
-
-      const ctaTrig = { trigger: compRef.current, start: 'top 70%' };
-      gsap.to(labelRef.current, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out', scrollTrigger: ctaTrig });
-      gsap.to(bodyRef.current, { opacity: 1, y: 0, duration: 0.7, delay: 0.1, ease: 'power3.out', scrollTrigger: ctaTrig });
-      gsap.to(chipsRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.65,
-        stagger: 0.08,
-        delay: 0.18,
-        ease: 'power3.out',
-        scrollTrigger: ctaTrig,
+      gsap.to(buttonRef.current, {
+        scale: 1.015,
+        duration: 3,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
       });
-      gsap.to(buttonRef.current, { opacity: 1, y: 0, duration: 0.8, delay: 0.32, ease: 'power3.out', scrollTrigger: ctaTrig });
     }, compRef);
 
     return () => ctx.revert();
@@ -99,10 +90,11 @@ export default function CTAScene() {
         fill
         sizes="100vw"
         className="scene-plate cta-plate"
+        data-depth="background"
       />
-      <p className="cta-lbl" ref={labelRef}>Ready to restore</p>
-      <p className="cta-body" ref={bodyRef}>Tell Clearwater what the water concealed, then enter the lab to recover the frame.</p>
-      <div className="cta-prompts" aria-hidden="true">
+      <p className="cta-lbl" ref={labelRef} data-depth="foreground">Ready to restore</p>
+      <p className="cta-body" ref={bodyRef} data-depth="foreground">Tell Clearwater what the water concealed, then enter the lab to recover the frame.</p>
+      <div className="cta-prompts" aria-hidden="true" data-depth="mid">
         {promptChips.map((prompt, index) => (
           <span
             key={prompt}
@@ -123,6 +115,7 @@ export default function CTAScene() {
         onMouseMove={handleButtonMove}
         onMouseLeave={resetButton}
         ref={buttonRef}
+        data-depth="foreground"
       >
         Enter the Lab &rarr;
         {ripples.map((ripple) => (
