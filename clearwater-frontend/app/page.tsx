@@ -1,6 +1,5 @@
 import CampaignRail from '../components/CampaignRail';
 import SurfaceScene from '../components/scenes/SurfaceScene';
-import IntroScene from '../components/scenes/IntroScene';
 import HeroScene from '../components/scenes/HeroScene';
 import CardsScene from '../components/scenes/CardsScene';
 import CTAScene from '../components/scenes/CTAScene';
@@ -11,7 +10,6 @@ export default function Home() {
     <main>
       <CampaignRail />
       <SurfaceScene />
-      <IntroScene />
       <HeroScene />
       <CardsScene />
       <CTAScene />

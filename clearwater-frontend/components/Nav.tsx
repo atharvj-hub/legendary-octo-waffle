@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { gsap } from '../lib/gsap';
 
 const links = [
-  { href: '#intro-section', label: 'Story' },
+  { href: '#surface-section', label: 'Story' },
   { href: '#hero-section', label: 'System' },
   { href: '#cards-section', label: 'Pipeline' },
 ];

@@ -4,12 +4,10 @@ import { useEffect, useState } from 'react';
 import { ScrollTrigger } from '../lib/gsap';
 
 const sections = [
-  { id: 'surface-section', label: 'Surface', numeral: 'I' },
-  { id: 'intro-section', label: 'Descent', numeral: 'II' },
-  { id: 'hero-section', label: 'Signal', numeral: 'III' },
-  { id: 'cards-section', label: 'Fusion', numeral: 'IV' },
-  { id: 'cta-section', label: 'Invite', numeral: 'V' },
-  { id: 'lab-section', label: 'Lab', numeral: 'VI' },
+  { id: 'surface-section', label: 'Surface / Descent', numeral: 'I' },
+  { id: 'hero-section', label: 'System', numeral: 'II' },
+  { id: 'cards-section', label: 'Pipeline', numeral: 'III' },
+  { id: 'lab-section', label: 'Lab', numeral: 'IV' },
 ];
 
 export default function CampaignRail() {
