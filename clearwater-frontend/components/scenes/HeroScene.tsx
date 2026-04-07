@@ -1,6 +1,8 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useRef } from 'react';
+import { campaignAssets } from '../../lib/assets/manifest';
 import { gsap } from '../../lib/gsap';
 
 const prompts = [
@@ -104,6 +106,13 @@ export default function HeroScene() {
 
   return (
     <section className="hero-section" ref={compRef} id="hero-section">
+      <Image
+        src={campaignAssets.hero.plate.path}
+        alt={campaignAssets.hero.plate.alt}
+        fill
+        sizes="100vw"
+        className="scene-plate hero-plate"
+      />
       <div className="hero-left" ref={leftRef}>
         <p className="eyebrow" ref={eyebrowRef}>Project - 2026</p>
         <h2 className="hero-h" ref={headingRef}>The ocean holds<br />secrets. <em>We restore</em><br />what was lost.</h2>

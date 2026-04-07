@@ -1,7 +1,9 @@
 'use client';
 
+import Image from 'next/image';
 import type { CSSProperties, MouseEvent } from 'react';
 import { useEffect, useRef } from 'react';
+import { campaignAssets } from '../../lib/assets/manifest';
 import { gsap } from '../../lib/gsap';
 
 const cards = [
@@ -10,18 +12,21 @@ const cards = [
     title: 'Dark Channel Prior',
     body: 'Explicit physical modeling of light scattering and attenuation. Fast, deterministic, GPU-free - the first stage of every restoration run.',
     cue: 'Water pathfinding',
+    image: campaignAssets.cards.reefMemory,
   },
   {
     number: '02 - Learning',
     title: 'U-Net Encoder',
     body: '64 to 128 to 256 to 512 to 1024 channel progression. Skip connections preserve spatial detail the encoder would otherwise discard.',
     cue: 'Semantic recovery',
+    image: campaignAssets.cards.diverLens,
   },
   {
     number: '03 - Fusion',
     title: '6-ch Hybrid',
     body: 'Raw signal and DCP output are concatenated into a 6-channel tensor. The network learns to arbitrate between both at every pixel.',
     cue: 'Human-grade finish',
+    image: campaignAssets.cards.sonarAbyss,
   },
 ];
 
@@ -119,6 +124,13 @@ export default function CardsScene() {
             onMouseLeave={resetTilt}
             style={{ '--mx': '50%', '--my': '50%', '--rx': '0deg', '--ry': '0deg' } as CSSProperties}
           >
+            <Image
+              src={card.image.path}
+              alt={card.image.alt}
+              fill
+              sizes="(max-width: 900px) 100vw, 33vw"
+              className="card-plate"
+            />
             <div className="card-inner">
               <div className="card-head">
                 <div className="card-num">{card.number}</div>

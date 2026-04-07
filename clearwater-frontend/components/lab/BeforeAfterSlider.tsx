@@ -1,6 +1,8 @@
 'use client';
 
+import Image from 'next/image';
 import React, { useRef, useState, useEffect } from 'react';
+import { campaignAssets } from '../../lib/assets/manifest';
 import { useStore } from '../../store/useStore';
 
 export default function BeforeAfterSlider() {
@@ -45,6 +47,13 @@ export default function BeforeAfterSlider() {
         onTouchStart={(e) => { setDragging(true); setPos(e.touches[0].clientX); }}
       >
         <div className="img-after">
+          <Image
+            src={campaignAssets.lab.afterDemo.path}
+            alt={campaignAssets.lab.afterDemo.alt}
+            fill
+            sizes="(max-width: 900px) 100vw, 900px"
+            className="slider-img"
+          />
           <div className="after-particles"></div>
           <span className="img-label lbl-a">Enhanced</span>
         </div>
@@ -53,6 +62,13 @@ export default function BeforeAfterSlider() {
           className="img-before" 
           style={{ clipPath: `inset(0 ${(100 - sliderPct).toFixed(1)}% 0 0)` }}
         >
+          <Image
+            src={campaignAssets.lab.beforeDemo.path}
+            alt={campaignAssets.lab.beforeDemo.alt}
+            fill
+            sizes="(max-width: 900px) 100vw, 900px"
+            className="slider-img"
+          />
           <div className="before-haze"></div>
           <div className="before-scatter"></div>
           <span className="img-label lbl-b">Original</span>

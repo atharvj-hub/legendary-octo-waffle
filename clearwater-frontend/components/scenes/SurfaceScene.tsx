@@ -1,6 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef } from "react";
+import { campaignAssets } from "../../lib/assets/manifest";
 import { gsap } from "../../lib/gsap";
 
 export default function SurfaceScene() {
@@ -51,6 +53,14 @@ export default function SurfaceScene() {
 
   return (
     <section ref={compRef} className="surface-scene-v2" id="surface-section">
+      <Image
+        src={campaignAssets.surface.skyPlate.path}
+        alt={campaignAssets.surface.skyPlate.alt}
+        fill
+        priority
+        sizes="100vw"
+        className="scene-plate surface-plate"
+      />
       <div ref={shimmerRef} className="surface-light-shimmer" />
       <div className="surface-water-distort" />
       <div ref={overlayRef} className="surface-dark-overlay" />

@@ -1,7 +1,9 @@
 'use client';
 
+import Image from 'next/image';
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import { useEffect, useRef, useState } from 'react';
+import { campaignAssets } from '../../lib/assets/manifest';
 import { gsap } from '../../lib/gsap';
 
 const promptChips = [
@@ -91,6 +93,13 @@ export default function CTAScene() {
 
   return (
     <section className="cta-section" ref={compRef} id="cta-section">
+      <Image
+        src={campaignAssets.cta.portal.path}
+        alt={campaignAssets.cta.portal.alt}
+        fill
+        sizes="100vw"
+        className="scene-plate cta-plate"
+      />
       <p className="cta-lbl" ref={labelRef}>Ready to restore</p>
       <p className="cta-body" ref={bodyRef}>Tell Clearwater what the water concealed, then enter the lab to recover the frame.</p>
       <div className="cta-prompts" aria-hidden="true">

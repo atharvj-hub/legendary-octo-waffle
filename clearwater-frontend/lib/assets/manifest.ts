@@ -14,7 +14,7 @@ export type MotionAsset = {
 export const campaignAssets = {
   surface: {
     skyPlate: {
-      path: '/campaign/images/surface/surface-sky-plate-v001.avif',
+      path: '/campaign/images/surface/surface-threshold-wide-v001.png',
       alt: 'Ocean surface with soft horizon light',
       notes: 'Wide matte plate for the opening scene.',
     },
@@ -25,8 +25,8 @@ export const campaignAssets = {
   },
   intro: {
     lightBeam: {
-      path: '/campaign/images/intro/intro-light-beam-v001.avif',
-      alt: 'Underwater light shaft with particulate bloom',
+      path: '/campaign/images/intro/intro-descent-cathedral-v001.png',
+      alt: 'Underwater cathedral descent with light shafts and reef silhouettes',
       notes: 'Can be layered over the grid background.',
     },
     particleSprite: {
@@ -37,8 +37,8 @@ export const campaignAssets = {
   },
   hero: {
     plate: {
-      path: '/campaign/images/hero/hero-depth-plate-v001.avif',
-      alt: 'Deep-water hero environment with layered depth',
+      path: '/campaign/images/hero/hero-explorer-depth-plate-v001.png',
+      alt: 'Deep-water explorer environment with reef archive cylinders',
       notes: 'Primary premium visual for the hero scene.',
     },
     loop: {
@@ -47,20 +47,37 @@ export const campaignAssets = {
     },
   },
   cards: {
-    overlay: {
-      path: '/campaign/images/cards/cards-sheen-overlay-v001.avif',
-      alt: 'Soft underwater sheen overlay',
-      notes: 'Used for premium reflective movement on hover.',
+    reefMemory: {
+      path: '/campaign/images/cards/cards-reef-memory-v001.png',
+      alt: 'Macro coral memory texture in suspended underwater particles',
+      notes: 'Feature card plate for physical restoration.',
+    },
+    diverLens: {
+      path: '/campaign/images/cards/cards-diver-lens-v001.png',
+      alt: 'Diver lens reflecting a luminous reef',
+      notes: 'Feature card plate for learning and focus.',
+    },
+    sonarAbyss: {
+      path: '/campaign/images/cards/cards-sonar-abyss-v001.png',
+      alt: 'Abstract abyssal sonar rings in deep water',
+      notes: 'Feature card plate for fusion and signal arbitration.',
+    },
+  },
+  cta: {
+    portal: {
+      path: '/campaign/images/cta/cta-luminous-portal-v001.png',
+      alt: 'Luminous coral portal in deep underwater light',
+      notes: 'Final campaign plate for the call to action.',
     },
   },
   lab: {
     beforeDemo: {
-      path: '/campaign/images/lab/lab-demo-before-v001.webp',
+      path: '/campaign/images/lab/lab-restored-reef-before-v001.png',
       alt: 'Murky underwater frame before restoration',
       notes: 'Use realistic degradation, not stylized blur.',
     },
     afterDemo: {
-      path: '/campaign/images/lab/lab-demo-after-v001.webp',
+      path: '/campaign/images/lab/lab-restored-reef-after-v001.png',
       alt: 'Restored underwater frame after processing',
       notes: 'Keep believable recovery, avoid over-sharpening.',
     },

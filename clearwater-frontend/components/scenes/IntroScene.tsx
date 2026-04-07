@@ -1,6 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef } from "react";
+import { campaignAssets } from "../../lib/assets/manifest";
 import { gsap } from "../../lib/gsap";
 
 export default function IntroScene() {
@@ -124,6 +126,13 @@ export default function IntroScene() {
 
   return (
     <section ref={compRef} id="intro-section" className="intro-section" style={{ opacity: 0 }}>
+      <Image
+        src={campaignAssets.intro.lightBeam.path}
+        alt={campaignAssets.intro.lightBeam.alt}
+        fill
+        sizes="100vw"
+        className="scene-plate intro-plate"
+      />
       <div className="intro-beam" ref={beamRef} />
       <div className="intro-veil" ref={veilRef} />
 
@@ -131,6 +140,7 @@ export default function IntroScene() {
         {Array.from({ length: 36 }).map((_, index) => (
           <div
             key={index}
+            className="particle"
             ref={(element) => {
               if (element) {
                 particlesRef.current[index] = element;
