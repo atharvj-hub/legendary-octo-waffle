@@ -67,7 +67,7 @@ export default function CardsScene() {
 
   return (
     <section className="cards-section" ref={compRef} id="cards-section">
-      <div className="cards-copy" ref={copyRef} data-depth="foreground">
+      <div className="cards-copy" ref={copyRef}>
         <p className="cards-eyebrow">Dive protocol</p>
         <h2 className="cards-title">A restoration pipeline that behaves like an expedition.</h2>
         <p className="cards-body">Each chapter moves deeper into the image: physics for water behavior, learning for scene understanding, and fusion for a premium final frame.</p>
@@ -85,7 +85,6 @@ export default function CardsScene() {
             onMouseMove={handleMove}
             onMouseLeave={resetTilt}
             style={{ '--mx': '50%', '--my': '50%', '--rx': '0deg', '--ry': '0deg' } as CSSProperties}
-            data-depth={index === 1 ? 'foreground' : 'mid'}
           >
             <Image
               src={card.image.path}

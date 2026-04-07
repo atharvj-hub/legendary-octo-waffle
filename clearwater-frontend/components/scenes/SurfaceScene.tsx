@@ -63,7 +63,7 @@ export default function SurfaceScene() {
       <div className="surface-water-distort" />
       <div ref={overlayRef} className="surface-dark-overlay" />
       <div ref={flashRef} className="surface-flash" />
-      <div ref={contentRef} className="surface-cover" data-depth="foreground">
+      <div ref={contentRef} className="surface-cover">
         <p className="surface-kicker">Ocean vision campaign - 2026</p>
         <h1 className="surface-heading" data-breathe aria-label="Clearwater">
           <span className="surface-heading-the">The</span>
