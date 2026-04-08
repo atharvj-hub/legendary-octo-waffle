@@ -19,6 +19,7 @@ export default function HeroScene() {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const bodyRef = useRef<HTMLParagraphElement>(null);
   const creditsRef = useRef<HTMLDivElement>(null);
+  const coreRef = useRef<HTMLDivElement>(null);
   const promptsRef = useRef<HTMLButtonElement[]>([]);
 
   useEffect(() => {
@@ -31,6 +32,24 @@ export default function HeroScene() {
         ease: 'sine.inOut',
         repeat: -1,
         yoyo: true,
+      });
+
+      if (coreRef.current) {
+        gsap.to(coreRef.current, {
+          y: -8,
+          rotate: 0.6,
+          duration: 4.2,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut',
+        });
+      }
+
+      gsap.to('.core-scan', {
+        yPercent: 160,
+        duration: 3.8,
+        repeat: -1,
+        ease: 'sine.inOut',
       });
     }, compRef);
 
@@ -93,6 +112,17 @@ export default function HeroScene() {
         <div className="ring r2" />
         <div className="ring r3" />
         <div className="crosshair" />
+        <div className="restoration-core" ref={coreRef} aria-hidden="true">
+          <div className="core-beam b1" />
+          <div className="core-beam b2" />
+          <div className="core-shell">
+            <div className="core-before">raw</div>
+            <div className="core-after">restored</div>
+            <div className="core-scan" />
+            <div className="core-split" />
+            <div className="core-aperture" />
+          </div>
+        </div>
         <div className="dot d1" />
         <div className="dot d2" />
         <div className="dot d3" />
