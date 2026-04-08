@@ -8,6 +8,10 @@ type CampaignTimelineProps = {
   children: ReactNode;
 };
 
+const wavePathA = "M0,100 C300,180 600,20 900,100 C1200,180 1440,60 1440,60 L1440,200 L0,200 Z";
+const wavePathB = "M0,120 C300,60 600,160 900,80 C1200,40 1440,140 1440,140 L1440,200 L0,200 Z";
+const transitionBeats = [0.14, 0.33, 0.6, 0.8];
+
 export default function CampaignTimeline({ children }: CampaignTimelineProps) {
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -41,6 +45,23 @@ export default function CampaignTimeline({ children }: CampaignTimelineProps) {
       gsap.set(q("[data-depth='background']"), { yPercent: 0, scale: 1.03 });
       gsap.set(q("[data-depth='mid']"), { yPercent: 0 });
       gsap.set(q("[data-depth='foreground']"), { yPercent: 0 });
+      gsap.set(q(".campaign-wave-transition"), { autoAlpha: 0, yPercent: 96, scaleY: 0.94 });
+
+      gsap.to(q(".campaign-wave-path"), {
+        attr: { d: wavePathB },
+        duration: 2.8,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+      });
+
+      gsap.to(q(".campaign-wave-drift"), {
+        x: -50,
+        duration: 4,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+      });
 
       const masterTimeline = gsap.timeline({
         defaults: { ease: "none" },
@@ -77,6 +98,25 @@ export default function CampaignTimeline({ children }: CampaignTimelineProps) {
         .to(q(".lab-hdr"), { opacity: 1, y: 0, duration: 0.1 }, 0.84)
         .to(q(".lab-wrap"), { opacity: 1, y: 0, duration: 0.1 }, 0.88);
 
+      q(".campaign-wave-transition").forEach((wave, index) => {
+        const beat = transitionBeats[index] ?? 0.5;
+
+        masterTimeline
+          .to(wave, {
+            autoAlpha: 0.92,
+            yPercent: 8,
+            scaleY: 1,
+            duration: 0.035,
+            immediateRender: false,
+          }, beat)
+          .to(wave, {
+            autoAlpha: 0,
+            yPercent: -82,
+            scaleY: 0.88,
+            duration: 0.065,
+          }, beat + 0.035);
+      });
+
       gsap.to(q("[data-breathe]"), {
         y: 3,
         scale: 1.006,
@@ -94,6 +134,17 @@ export default function CampaignTimeline({ children }: CampaignTimelineProps) {
   return (
     <div className="campaign-timeline" ref={rootRef}>
       {children}
+      {transitionBeats.map((_, index) => (
+        <div className="campaign-wave-transition" key={index} aria-hidden="true">
+          <div className="campaign-wave-drift">
+            <svg className="campaign-wave-svg" viewBox="0 0 1440 200" preserveAspectRatio="none">
+              <path className="campaign-wave-depth" d={wavePathA} />
+              <path className="campaign-wave-path" d={wavePathA} />
+            </svg>
+            <div className="campaign-wave-foam" />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
