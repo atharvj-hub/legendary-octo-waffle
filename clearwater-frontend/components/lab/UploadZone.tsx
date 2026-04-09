@@ -43,6 +43,7 @@ export default function UploadZone() {
           <path d="M12 16V8m0 0L9 11m3-3 3 3M6 20h12" />
         </svg>
       </div>
+      <span className="demo-badge" aria-label="This lab is a demo preview">Demo Preview</span>
       <div className="up-title">Drop an underwater image</div>
       <p className="up-hint">PNG - JPG - WEBP - up to 10MB</p>
       <div className="up-signal">Ask Clearwater</div>

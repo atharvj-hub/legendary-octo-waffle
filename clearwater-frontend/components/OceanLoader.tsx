@@ -17,7 +17,6 @@ export default function OceanLoader() {
 
   useEffect(() => {
     if (reducedMotion) {
-      setIsMounted(false);
       return;
     }
 
@@ -174,7 +173,7 @@ export default function OceanLoader() {
     };
   }, [reducedMotion]);
 
-  if (!isMounted) {
+  if (!isMounted || reducedMotion) {
     return null;
   }
 

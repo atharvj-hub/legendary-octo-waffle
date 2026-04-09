@@ -1,3 +1,14 @@
+/**
+ * HeroScene — System hero section with procedural restoration-lens focal object.
+ *
+ * UPGRADE PATH (10.9):
+ * The `restoration-core` element is currently procedural CSS — not final art.
+ * When the final hero asset is ready (Blender GLB, Spline embed, or video sprite sheet):
+ *   1. Replace the `.hero-right` children with a <Canvas> / <Spline> / <video> component.
+ *   2. Keep the surrounding hero-left layout, credits, and prompt chips unchanged.
+ *   3. Update `manifest.ts` with the real asset path under `future3d.heroObject`.
+ *   4. Add a mobile-optimised variant (smaller, no parallax) to avoid layout issues.
+ */
 'use client';
 
 import Image from 'next/image';

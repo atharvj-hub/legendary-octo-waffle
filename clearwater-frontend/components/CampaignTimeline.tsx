@@ -1,3 +1,19 @@
+/**
+ * CampaignTimeline — Master animation system for the campaign page.
+ *
+ * ANIMATION OWNERSHIP RULE (10.10):
+ * All scroll-triggered story pacing (reveals, transitions, parallax depth)
+ * is centralised here via a single master ScrollTrigger timeline.
+ *
+ * Local scene components (HeroScene, CTAScene, OceanLoader, card hover handlers)
+ * should own ONLY:
+ *   - Idle loops (e.g. floating motion, breathing)
+ *   - Hover / pointer feedback
+ *   - Click animations
+ *
+ * Do NOT add scroll-triggered timelines in individual scene files.
+ * This keeps the campaign pacing predictable and avoids conflicts.
+ */
 "use client";
 
 import type { CSSProperties, ReactNode } from "react";

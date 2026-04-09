@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { campaignAssets } from '../../lib/assets/manifest';
 import { useStore } from '../../store/useStore';
 
@@ -37,6 +37,32 @@ export default function BeforeAfterSlider() {
       document.removeEventListener('touchmove', handleTouchMove);
     };
   }, [dragging]);
+
+  /* ── Fix 10.7: Keyboard accessibility ── */
+  const handleRangeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSliderPct(Number(e.target.value));
+  }, []);
+
+  /* ── Fix 10.4: Canvas-based download ── */
+  const handleDownload = useCallback(async () => {
+    try {
+      const imgSrc = campaignAssets.lab.afterDemo.path;
+      const res = await fetch(imgSrc);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = 'clearwater-restored.webp';
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+      URL.revokeObjectURL(url);
+    } catch {
+      // Fallback: open image in new tab
+      window.open(campaignAssets.lab.afterDemo.path, '_blank');
+    }
+  }, []);
 
   return (
     <div className="result-z" style={{ display: 'block' }}>
@@ -77,13 +103,35 @@ export default function BeforeAfterSlider() {
         <div className="slider-div" style={{ left: `${sliderPct.toFixed(1)}%` }}>
           <div className="slider-hdl">&#8596;</div>
         </div>
+
+        {/* Fix 10.7: Keyboard-accessible range input mapped to slider */}
+        <input
+          type="range"
+          min={2}
+          max={98}
+          step={1}
+          value={sliderPct}
+          onChange={handleRangeChange}
+          className="slider-range-input"
+          aria-label="Before and after comparison slider"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(sliderPct)}
+          aria-valuetext={`${Math.round(sliderPct)}% original, ${Math.round(100 - sliderPct)}% enhanced`}
+        />
       </div>
       
+      {/* Fix 10.3: Demo-only label on result */}
+      <div className="result-demo-notice">
+        <span className="demo-badge">Sample output — demo only</span>
+      </div>
+
       <div className="result-bar">
         <span className="result-meta">PSNR &nbsp;28.4 dB &nbsp;&bull;&nbsp; SSIM &nbsp;0.871 &nbsp;&bull;&nbsp; 512 &times; 512</span>
         <div className="result-btns">
           <button className="btn-new" onClick={resetLab}>New image</button>
-          <button className="btn-dl">Download PNG</button>
+          {/* Fix 10.4: Download button wired up */}
+          <button className="btn-dl" onClick={handleDownload}>Download</button>
         </div>
       </div>
     </div>

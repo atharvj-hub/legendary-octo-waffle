@@ -2121,6 +2121,47 @@ nav {
   transform: translateY(-2px);
 }
 
+/* ── Demo badge (10.3) ── */
+.demo-badge {
+  display: inline-block;
+  font-family: var(--fm);
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--signal);
+  border: 1px solid rgba(45, 212, 191, 0.24);
+  border-radius: 999px;
+  padding: 6px 14px;
+  background: rgba(45, 212, 191, 0.06);
+  margin-bottom: 14px;
+}
+
+/* ── Result demo notice (10.3) ── */
+.result-demo-notice {
+  text-align: center;
+  margin-top: 12px;
+}
+
+/* ── Accessible slider range input (10.7) ── */
+.slider-range-input {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 44px;
+  z-index: 20;
+  opacity: 0;
+  cursor: col-resize;
+  margin: 0;
+  padding: 0;
+}
+
+.slider-range-input:focus-visible + .slider-div .slider-hdl,
+.slider-wrap:focus-within .slider-hdl {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 /* ── Responsive ── */
 @media (max-width: 900px) {
   .hero-section {
@@ -2128,8 +2169,22 @@ nav {
     padding: 100px 32px;
   }
 
+  /* Fix 10.6: Show a compact hero focal object on mobile instead of hiding it */
   .hero-right {
+    height: 200px;
+    margin: 0 auto;
+    order: -1;
+  }
+
+  .hero-right .ring,
+  .hero-right .crosshair,
+  .hero-right .dot,
+  .hero-right .stat {
     display: none;
+  }
+
+  .hero-right .restoration-core {
+    width: clamp(140px, 40vw, 200px);
   }
 
   .cards-grid {
@@ -2358,4 +2413,66 @@ nav {
   color: var(--text2);
   font-size: 13px;
   line-height: 1.5;
+}
+
+/* ── Fix 10.5: Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  /* Disable all CSS keyframe animations */
+  .loader-current,
+  .loader-wave::before,
+  .loader-wave::after,
+  .scroll-line,
+  .core-shell::before,
+  .core-aperture,
+  .r1, .r2, .r3,
+  .d1, .d2, .d3,
+  .proc-spin,
+  .proc-z::before {
+    animation: none !important;
+  }
+
+  /* Hide ambient overlays that rely on JS loops */
+  .campaign-particle,
+  .campaign-light-pass,
+  .campaign-ambient-drift,
+  .campaign-wave-transition {
+    display: none !important;
+  }
+
+  /* Remove all transitions to prevent motion */
+  .card,
+  .card-inner,
+  .card-plate,
+  .enter-btn,
+  .hero-chip,
+  .cta-chip,
+  .nav-link,
+  .nav-cta,
+  .campaign-rail-link,
+  .upload-z,
+  .btn-dl,
+  .btn-new,
+  .demo-btn,
+  .up-chip {
+    transition: none !important;
+  }
+
+  /* Ensure content is visible without scroll-driven reveals */
+  .hero-left,
+  .hero-h,
+  .hero-body,
+  .hero-credits,
+  .hero-chip,
+  .hero-right,
+  .cards-copy,
+  .card,
+  .cta-lbl,
+  .cta-body,
+  .cta-chip,
+  .enter-btn,
+  .lab-hdr,
+  .lab-wrap {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
