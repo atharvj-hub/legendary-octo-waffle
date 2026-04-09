@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useEffect, useRef } from 'react';
 import { campaignAssets } from '../../lib/assets/manifest';
 import { gsap } from '../../lib/gsap';
+import { useReducedMotion } from '../../lib/useReducedMotion';
 
 const prompts = [
   '/recover reef pigments',
@@ -12,6 +13,7 @@ const prompts = [
 ];
 
 export default function HeroScene() {
+  const reducedMotion = useReducedMotion();
   const compRef = useRef<HTMLElement>(null);
   const leftRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
@@ -25,6 +27,7 @@ export default function HeroScene() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       if (rightRef.current) gsap.set(rightRef.current, { x: 32, scale: 1, filter: 'blur(0px) brightness(1)' });
+      if (reducedMotion) return;
 
       if (headingRef.current) gsap.to(headingRef.current, {
         y: -5,
@@ -54,7 +57,7 @@ export default function HeroScene() {
     }, compRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [reducedMotion]);
 
   const scrollToLab = () => {
     const labSection = document.getElementById('lab-section');
@@ -89,6 +92,7 @@ export default function HeroScene() {
             <span className="credit-val">DCP + U-Net</span>
           </div>
         </div>
+        <p className="hero-note">Hero object is currently an interactive preview while final 3D art is in production.</p>
         <div className="hero-prompts">
           {prompts.map((prompt, index) => (
             <button

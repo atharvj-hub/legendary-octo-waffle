@@ -2,8 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "../lib/gsap";
+import { useReducedMotion } from "../lib/useReducedMotion";
 
 export default function OceanLoader() {
+  const reducedMotion = useReducedMotion();
   const [isMounted, setIsMounted] = useState(true);
   const rootRef = useRef<HTMLDivElement>(null);
   const waveRef = useRef<HTMLDivElement>(null);
@@ -14,6 +16,11 @@ export default function OceanLoader() {
   const particleRefs = useRef<HTMLSpanElement[]>([]);
 
   useEffect(() => {
+    if (reducedMotion) {
+      setIsMounted(false);
+      return;
+    }
+
     const root = rootRef.current;
     if (!root) {
       return;
@@ -165,7 +172,7 @@ export default function OceanLoader() {
       gsap.set(pageTargets, { clearProps: "filter,willChange" });
       ctx.revert();
     };
-  }, []);
+  }, [reducedMotion]);
 
   if (!isMounted) {
     return null;

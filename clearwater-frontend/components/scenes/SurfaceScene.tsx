@@ -4,8 +4,10 @@ import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { campaignAssets } from "../../lib/assets/manifest";
 import { gsap } from "../../lib/gsap";
+import { useReducedMotion } from "../../lib/useReducedMotion";
 
 export default function SurfaceScene() {
+  const reducedMotion = useReducedMotion();
   const compRef = useRef<HTMLElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const shimmerRef = useRef<HTMLDivElement>(null);
@@ -16,6 +18,12 @@ export default function SurfaceScene() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      if (reducedMotion) {
+        gsap.set([contentRef.current, shimmerRef.current], { opacity: 1, y: 0 });
+        gsap.set(flashRef.current, { opacity: 0 });
+        return;
+      }
+
       gsap.set(depthPlateRef.current, { opacity: 0, scale: 1.08, yPercent: 6 });
       gsap.set(contentRef.current, { opacity: 0, y: 28 });
       gsap.set(flashRef.current, { opacity: 0, scaleY: 0.12, transformOrigin: "50% 0%" });
@@ -36,7 +44,7 @@ export default function SurfaceScene() {
     }, compRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [reducedMotion]);
 
   return (
     <section ref={compRef} className="surface-scene-v2" id="surface-section">

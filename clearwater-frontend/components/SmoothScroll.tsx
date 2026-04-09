@@ -3,9 +3,17 @@
 import { useEffect } from "react";
 import Lenis from "lenis";
 import { ScrollTrigger } from "../lib/gsap";
+import { useReducedMotion } from "../lib/useReducedMotion";
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
+  const reducedMotion = useReducedMotion();
+
   useEffect(() => {
+    if (reducedMotion) {
+      ScrollTrigger.refresh();
+      return;
+    }
+
     const lenis = new Lenis({
       smoothWheel: true,
       lerp: 0.065,
@@ -32,7 +40,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       cancelAnimationFrame(frame);
       lenis.destroy();
     };
-  }, []);
+  }, [reducedMotion]);
 
   return <>{children}</>;
 }

@@ -3,6 +3,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import { useEffect, useRef } from "react";
 import { gsap } from "../lib/gsap";
+import { useReducedMotion } from "../lib/useReducedMotion";
 
 type CampaignTimelineProps = {
   children: ReactNode;
@@ -22,6 +23,7 @@ const ambientParticles = Array.from({ length: particleCount }, (_, index) => ({
 
 export default function CampaignTimeline({ children }: CampaignTimelineProps) {
   const rootRef = useRef<HTMLDivElement>(null);
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
     const root = rootRef.current;
@@ -57,6 +59,13 @@ export default function CampaignTimeline({ children }: CampaignTimelineProps) {
       gsap.set(q(".campaign-particle"), { autoAlpha: 0.18, x: 0, y: 0 });
       gsap.set(q(".card, .hero-chip, .cta-chip, .upload-z"), { "--panel-breath": 0.04 });
       gsap.set(q(".campaign-wave-transition"), { autoAlpha: 0, yPercent: 96, scaleY: 0.94 });
+
+      if (reducedMotion) {
+        gsap.set(revealTargets, { opacity: 1, y: 0 });
+        gsap.set(q("[data-depth='background'], [data-depth='mid'], [data-depth='foreground']"), { yPercent: 0, scale: 1 });
+        gsap.set(q(".campaign-light-pass, .campaign-particle, .campaign-wave-transition"), { autoAlpha: 0 });
+        return;
+      }
 
       gsap.to(q(".campaign-light-pass"), {
         xPercent: 120,
@@ -206,7 +215,7 @@ export default function CampaignTimeline({ children }: CampaignTimelineProps) {
     }, root);
 
     return () => ctx.revert();
-  }, []);
+  }, [reducedMotion]);
 
   return (
     <div className="campaign-timeline" ref={rootRef}>

@@ -5,6 +5,7 @@ import type { MouseEvent as ReactMouseEvent } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { campaignAssets } from '../../lib/assets/manifest';
 import { gsap } from '../../lib/gsap';
+import { useReducedMotion } from '../../lib/useReducedMotion';
 
 const promptChips = [
   '/restore coral mural',
@@ -13,6 +14,7 @@ const promptChips = [
 ];
 
 export default function CTAScene() {
+  const reducedMotion = useReducedMotion();
   const compRef = useRef<HTMLElement>(null);
   const labelRef = useRef<HTMLParagraphElement>(null);
   const bodyRef = useRef<HTMLParagraphElement>(null);
@@ -22,6 +24,7 @@ export default function CTAScene() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      if (reducedMotion) return;
       gsap.to(buttonRef.current, {
         scale: 1.015,
         duration: 3,
@@ -32,7 +35,7 @@ export default function CTAScene() {
     }, compRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [reducedMotion]);
 
   const handleClick = (event: ReactMouseEvent<HTMLButtonElement>) => {
     const button = event.currentTarget;
@@ -56,6 +59,9 @@ export default function CTAScene() {
   };
 
   const handleButtonMove = (event: ReactMouseEvent<HTMLButtonElement>) => {
+    if (reducedMotion) {
+      return;
+    }
     const button = event.currentTarget;
     const bounds = button.getBoundingClientRect();
     const x = event.clientX - bounds.left - bounds.width / 2;
