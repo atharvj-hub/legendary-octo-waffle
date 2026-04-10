@@ -68,6 +68,12 @@ export default function CampaignTimeline({ children }: CampaignTimelineProps) {
       ];
 
       gsap.set(revealTargets, { opacity: 0, y: 30 });
+
+      // V2.0 Typography: set initial states for character/word reveals
+      gsap.set(q(".hero-split-char"), { opacity: 0, y: 32, rotateX: 40, transformOrigin: "50% 100%" });
+      gsap.set(q(".cards-split-word"), { opacity: 0, y: 24, rotateX: 20, transformOrigin: "50% 100%" });
+      gsap.set(q(".floating-stat"), { opacity: 0, y: 28, scale: 0.92 });
+      gsap.set(q(".card-spec-float"), { opacity: 0, y: 16, scale: 0.9 });
       gsap.set(q("[data-depth='background']"), { yPercent: 0, scale: 1.03 });
       gsap.set(q("[data-depth='mid']"), { yPercent: 0 });
       gsap.set(q("[data-depth='foreground']"), { yPercent: 0 });
@@ -80,6 +86,9 @@ export default function CampaignTimeline({ children }: CampaignTimelineProps) {
         gsap.set(revealTargets, { opacity: 1, y: 0 });
         gsap.set(q("[data-depth='background'], [data-depth='mid'], [data-depth='foreground']"), { yPercent: 0, scale: 1 });
         gsap.set(q(".campaign-light-pass, .campaign-particle, .campaign-wave-transition"), { autoAlpha: 0 });
+        // V2.0: ensure split text and stats visible in reduced motion
+        gsap.set(q(".hero-split-char, .cards-split-word"), { opacity: 1, y: 0, rotateX: 0 });
+        gsap.set(q(".floating-stat, .card-spec-float"), { opacity: 1, y: 0, scale: 1 });
         return;
       }
 
@@ -184,16 +193,54 @@ export default function CampaignTimeline({ children }: CampaignTimelineProps) {
         .to(q(".surface-plate"), { filter: "blur(1.6px) brightness(0.92) saturate(0.86)" }, 0.07)
         .to(q(".surface-dark-overlay"), { opacity: 0.34 }, 0.1)
         .to(q(".hero-left"), { opacity: 1, y: 0, duration: 0.1 }, 0.18)
-        .to(q(".hero-left .eyebrow, .hero-h, .hero-body, .hero-credits, .hero-chip"), {
+        .to(q(".hero-left .eyebrow"), { opacity: 1, y: 0, duration: 0.06 }, 0.19)
+        .to(q(".hero-h"), { opacity: 1, y: 0, duration: 0.06 }, 0.2)
+        // V2.0: Character-by-character reveal for hero heading
+        .to(q(".hero-split-char"), {
+          opacity: 1,
+          y: 0,
+          rotateX: 0,
+          stagger: 0.008,
+          duration: 0.12,
+          ease: "power3.out",
+        }, 0.2)
+        .to(q(".hero-body, .hero-credits, .hero-chip"), {
           opacity: 1,
           y: 0,
           stagger: 0.012,
           duration: 0.1,
-        }, 0.2)
+        }, 0.24)
         .to(q(".hero-right"), { opacity: 1, y: 0, duration: 0.12 }, 0.2)
+        // V2.0: Floating stats rise into position
+        .to(q(".floating-stat"), {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          stagger: 0.04,
+          duration: 0.12,
+          ease: "power3.out",
+        }, 0.24)
         .to(q(".hero-right"), { filter: "blur(3px) brightness(0.94) saturate(0.92)", scale: 1.05, duration: 0.18 }, 0.27)
         .to(q(".cards-copy"), { opacity: 1, y: 0, duration: 0.16 }, 0.34)
+        // V2.0: Word-by-word reveal for cards heading
+        .to(q(".cards-split-word"), {
+          opacity: 1,
+          y: 0,
+          rotateX: 0,
+          stagger: 0.02,
+          duration: 0.14,
+          ease: "power3.out",
+        }, 0.35)
         .to(q(".card"), { opacity: 1, y: 0, rotateX: 0, scale: 1, stagger: 0.025, duration: 0.18 }, 0.38)
+        // V2.0: Card spec labels float up
+        .to(q(".card-spec-float"), {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          stagger: 0.03,
+          duration: 0.1,
+          ease: "power3.out",
+        }, 0.42)
         .to(q(".cta-lbl, .cta-body"), { opacity: 1, y: 0, stagger: 0.02, duration: 0.08 }, 0.66)
         .to(q(".cta-chip"), { opacity: 1, y: 0, stagger: 0.015, duration: 0.08 }, 0.7)
         .to(q(".enter-btn"), { opacity: 1, y: 0, duration: 0.1 }, 0.73)

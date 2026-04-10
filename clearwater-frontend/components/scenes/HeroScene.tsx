@@ -23,6 +23,25 @@ const prompts = [
   '/restore diver silhouette',
 ];
 
+/** Splits a line into character spans for GSAP stagger */
+function CharSplit({ text, offset = 0 }: { text: string; offset?: number }) {
+  return (
+    <>
+      {text.split("").map((char, i) => (
+        <span
+          key={`${char}-${i}`}
+          className="hero-split-char"
+          data-index={i + offset}
+          aria-hidden="true"
+          style={{ display: "inline-block" }}
+        >
+          {char === " " ? "\u00A0" : char}
+        </span>
+      ))}
+    </>
+  );
+}
+
 export default function HeroScene() {
   const reducedMotion = useReducedMotion();
   const compRef = useRef<HTMLElement>(null);
@@ -37,8 +56,19 @@ export default function HeroScene() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      const q = gsap.utils.selector(compRef.current);
+
       if (rightRef.current) gsap.set(rightRef.current, { x: 32, scale: 1, filter: 'blur(0px) brightness(1)' });
-      if (reducedMotion) return;
+
+      // Set initial states for character reveals and floating stats
+      gsap.set(q(".hero-split-char"), { opacity: 0, y: 32, rotateX: 40, transformOrigin: "50% 100%" });
+      gsap.set(q(".floating-stat"), { opacity: 0, y: 28, scale: 0.92 });
+
+      if (reducedMotion) {
+        gsap.set(q(".hero-split-char"), { opacity: 1, y: 0, rotateX: 0 });
+        gsap.set(q(".floating-stat"), { opacity: 1, y: 0, scale: 1 });
+        return;
+      }
 
       if (headingRef.current) gsap.to(headingRef.current, {
         y: -5,
@@ -75,6 +105,12 @@ export default function HeroScene() {
     labSection?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Split the heading lines for character animation
+  const line1 = "The ocean holds";
+  const line2 = "secrets. ";
+  const line2em = "We restore";
+  const line3 = "what was lost.";
+
   return (
     <section className="hero-section" ref={compRef} id="hero-section">
       <Image
@@ -87,7 +123,22 @@ export default function HeroScene() {
       />
       <div className="hero-left" ref={leftRef} data-depth="foreground">
         <p className="eyebrow" ref={eyebrowRef}>Project - 2026</p>
-        <h2 className="hero-h" ref={headingRef} data-breathe>The ocean holds<br />secrets. <em>We restore</em><br />what was lost.</h2>
+        <h2 className="hero-h" ref={headingRef} data-breathe aria-label="The ocean holds secrets. We restore what was lost.">
+          <span className="hero-line">
+            <CharSplit text={line1} offset={0} />
+          </span>
+          <br />
+          <span className="hero-line">
+            <CharSplit text={line2} offset={line1.length} />
+            <em style={{ fontStyle: "italic", color: "var(--accent)" }}>
+              <CharSplit text={line2em} offset={line1.length + line2.length} />
+            </em>
+          </span>
+          <br />
+          <span className="hero-line">
+            <CharSplit text={line3} offset={line1.length + line2.length + line2em.length} />
+          </span>
+        </h2>
         <p className="hero-body" ref={bodyRef}>A hybrid deep-learning system combining Dark Channel Prior physics modeling with a custom U-Net architecture to restore clarity, color, and detail from degraded underwater imagery.</p>
         <div className="hero-credits" ref={creditsRef}>
           <div className="credit">
@@ -138,17 +189,18 @@ export default function HeroScene() {
             <div className="core-aperture" />
           </div>
         </div>
+        {/* Floating stats — will animate in via CampaignTimeline */}
+        <div className="floating-stat stat-float-1">
+          <span className="floating-stat-value">6ch</span>
+          <span className="floating-stat-label">Feature fusion</span>
+        </div>
+        <div className="floating-stat stat-float-2">
+          <span className="floating-stat-value">512×512</span>
+          <span className="floating-stat-label">Input resolution</span>
+        </div>
         <div className="dot d1" />
         <div className="dot d2" />
         <div className="dot d3" />
-        <div className="stat s1">
-          <span className="stat-n">6ch</span>
-          <span className="stat-l">Feature fusion</span>
-        </div>
-        <div className="stat s2">
-          <span className="stat-n">512x512</span>
-          <span className="stat-l">Input resolution</span>
-        </div>
       </div>
     </section>
   );

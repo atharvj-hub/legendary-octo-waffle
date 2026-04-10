@@ -30,6 +30,30 @@ const cards = [
   },
 ];
 
+/** Word-level split for the section heading */
+function WordSplit({ text }: { text: string }) {
+  const words = text.split(/\s+/);
+  return (
+    <>
+      {words.map((word, i) => (
+        <span key={`${word}-${i}`}>
+          <span
+            className="cards-split-word"
+            data-index={i}
+            aria-hidden="true"
+            style={{ display: "inline-block" }}
+          >
+            {word}
+          </span>
+          {i < words.length - 1 && (
+            <span aria-hidden="true" style={{ display: "inline-block" }}>{"\u00A0"}</span>
+          )}
+        </span>
+      ))}
+    </>
+  );
+}
+
 export default function CardsScene() {
   const compRef = useRef<HTMLElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
@@ -37,7 +61,13 @@ export default function CardsScene() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      const q = gsap.utils.selector(compRef.current);
+
       gsap.set(cardRefs.current, { scale: 0.96, rotateX: 8 });
+      // Word-level initial state
+      gsap.set(q(".cards-split-word"), { opacity: 0, y: 24, rotateX: 20, transformOrigin: "50% 100%" });
+      // Floating spec numbers in card heads
+      gsap.set(q(".card-spec-float"), { opacity: 0, y: 16, scale: 0.9 });
     }, compRef);
 
     return () => ctx.revert();
@@ -69,7 +99,9 @@ export default function CardsScene() {
     <section className="cards-section" ref={compRef} id="cards-section">
       <div className="cards-copy" ref={copyRef}>
         <p className="cards-eyebrow">Dive protocol</p>
-        <h2 className="cards-title">A restoration pipeline that behaves like an expedition.</h2>
+        <h2 className="cards-title" aria-label="A restoration pipeline that behaves like an expedition.">
+          <WordSplit text="A restoration pipeline that behaves like an expedition." />
+        </h2>
         <p className="cards-body">Each chapter moves deeper into the image: physics for water behavior, learning for scene understanding, and fusion for a premium final frame.</p>
       </div>
       <div className="cards-grid">
@@ -96,7 +128,7 @@ export default function CardsScene() {
             <div className="card-inner">
               <div className="card-head">
                 <div className="card-num">{card.number}</div>
-                <div className="card-cue">{card.cue}</div>
+                <div className="card-cue card-spec-float">{card.cue}</div>
               </div>
               <div className="card-title">{card.title}</div>
               <div className="card-body">{card.body}</div>

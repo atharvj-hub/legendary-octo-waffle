@@ -1312,22 +1312,39 @@ nav {
   }
 }
 
-.stat {
-  position: absolute;
-  font-family: var(--fm);
+/* ── V2.0: Typography split characters ── */
+.split-char,
+.hero-split-char,
+.cards-split-word {
+  display: inline-block;
+  will-change: transform, opacity;
 }
 
-.s1 {
+.hero-line {
+  display: inline;
+}
+
+/* ── V2.0: Floating stats (replace old .stat) ── */
+.floating-stat {
+  position: absolute;
+  font-family: var(--fm);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  will-change: transform, opacity;
+}
+
+.stat-float-1 {
   top: 12%;
   right: 4%;
 }
 
-.s2 {
+.stat-float-2 {
   bottom: 18%;
   left: 4%;
 }
 
-.stat-n {
+.floating-stat-value {
   font-size: 32px;
   font-weight: 300;
   color: var(--text);
@@ -1335,7 +1352,7 @@ nav {
   line-height: 1;
 }
 
-.stat-l {
+.floating-stat-label {
   font-size: 9px;
   letter-spacing: .2em;
   color: var(--text3);
@@ -2179,7 +2196,7 @@ nav {
   .hero-right .ring,
   .hero-right .crosshair,
   .hero-right .dot,
-  .hero-right .stat {
+  .hero-right .floating-stat {
     display: none;
   }
 
