@@ -22,12 +22,12 @@ export default function HeroScene() {
     const ctx = gsap.context(() => {
       const q = gsap.utils.selector(compRef.current);
 
-      gsap.set(q(".hero-split-char"), { opacity: 0, y: 32, rotateX: 40, transformOrigin: "50% 100%" });
-      gsap.set(q(".floating-stat"), { opacity: 0, y: 40, scale: 0.92 });
+      gsap.set(q(".split-char"), { opacity: 0, y: 32, rotateX: 40, transformOrigin: "50% 100%" });
+      gsap.set(q(".floating-spec"), { opacity: 0, y: 40, scale: 0.92 });
 
       if (reducedMotion) {
-        gsap.set(q(".hero-split-char"), { opacity: 1, y: 0, rotateX: 0 });
-        gsap.set(q(".floating-stat"), { opacity: 1, y: 0, scale: 1 });
+        gsap.set(q(".split-char"), { opacity: 1, y: 0, rotateX: 0 });
+        gsap.set(q(".floating-spec"), { opacity: 1, y: 0, scale: 1 });
         return;
       }
 
@@ -71,16 +71,16 @@ export default function HeroScene() {
       <div className="hero-left" data-depth="foreground">
         <p className="eyebrow">Project · 2026</p>
         <h2 className="hero-h" ref={headingRef} data-breathe aria-label="The ocean holds secrets. We restore what was lost.">
-          <span className="hero-line"><SplitChars text={line1} offset={0} className="hero-split-char" /></span>
+          <span className="hero-line"><SplitChars text={line1} offset={0} className="split-char" /></span>
           <br />
           <span className="hero-line">
-            <SplitChars text={line2} offset={line1.length} className="hero-split-char" />
+            <SplitChars text={line2} offset={line1.length} className="split-char" />
             <em style={{ fontStyle: "italic", color: "var(--accent)" }}>
-              <SplitChars text={line2em} offset={line1.length + line2.length} className="hero-split-char" />
+              <SplitChars text={line2em} offset={line1.length + line2.length} className="split-char" />
             </em>
           </span>
           <br />
-          <span className="hero-line"><SplitChars text={line3} offset={line1.length + line2.length + line2em.length} className="hero-split-char" /></span>
+          <span className="hero-line"><SplitChars text={line3} offset={line1.length + line2.length + line2em.length} className="split-char" /></span>
         </h2>
         <p className="hero-body">A hybrid deep-learning system combining Dark Channel Prior physics modeling with a custom U-Net architecture to restore clarity, color, and detail from degraded underwater imagery.</p>
         <div className="hero-credits">

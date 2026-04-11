@@ -92,7 +92,7 @@ export function FloatingStat({
   className?: string;
 }) {
   return (
-    <div className={`floating-stat ${className}`}>
+    <div className={`floating-spec ${className}`}>
       <span className="floating-stat-value">{value}</span>
       <span className="floating-stat-label">{label}</span>
     </div>

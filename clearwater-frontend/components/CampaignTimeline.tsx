@@ -63,9 +63,9 @@ export default function CampaignTimeline({ children }: CampaignTimelineProps) {
       ];
 
       gsap.set(revealTargets, { opacity: 0, y: 30 });
-      gsap.set(q(".hero-split-char"), { opacity: 0, y: 32, rotateX: 40, transformOrigin: "50% 100%" });
+      gsap.set(q(".split-char"), { opacity: 0, y: 32, rotateX: 40, transformOrigin: "50% 100%" });
       gsap.set(q(".cards-split-word"), { opacity: 0, y: 24, rotateX: 20, transformOrigin: "50% 100%" });
-      gsap.set(q(".floating-stat"), { opacity: 0, y: 40, scale: 0.92 });
+      gsap.set(q(".floating-spec"), { opacity: 0, y: 40, scale: 0.92 });
       gsap.set(q(".card-spec-float"), { opacity: 0, y: 24, scale: 0.9 });
 
       // CTA clip-path starts collapsed to center (Phase 4)
@@ -73,8 +73,8 @@ export default function CampaignTimeline({ children }: CampaignTimelineProps) {
 
       if (reducedMotion) {
         gsap.set(revealTargets, { opacity: 1, y: 0 });
-        gsap.set(q(".hero-split-char, .cards-split-word"), { opacity: 1, y: 0, rotateX: 0 });
-        gsap.set(q(".floating-stat, .card-spec-float"), { opacity: 1, y: 0, scale: 1 });
+        gsap.set(q(".split-char, .cards-split-word"), { opacity: 1, y: 0, rotateX: 0 });
+        gsap.set(q(".floating-spec, .card-spec-float"), { opacity: 1, y: 0, scale: 1 });
         gsap.set(q(".cta-section"), { clipPath: "circle(150% at 50% 50%)" });
         return;
       }
@@ -151,7 +151,7 @@ export default function CampaignTimeline({ children }: CampaignTimelineProps) {
         .to(q(".hero-h"), { opacity: 1, y: 0, duration: 0.05 }, 0.16)
 
         // Character-by-character reveal (Apple typing effect)
-        .fromTo(q(".hero-split-char"),
+        .fromTo(q(".split-char"),
           { opacity: 0, y: 10 },
           { opacity: 1, y: 0, rotateX: 0, stagger: 0.02, duration: 0.14, ease: "none" },
           0.16)
@@ -163,7 +163,7 @@ export default function CampaignTimeline({ children }: CampaignTimelineProps) {
         .to(q(".hero-right"), { opacity: 1, y: 0, duration: 0.1 }, 0.16)
 
         // Floating stats rise from below
-        .fromTo(q(".floating-stat"),
+        .fromTo(q(".floating-spec"),
           { y: 40, opacity: 0, scale: 0.92 },
           { y: 0, opacity: 1, scale: 1, stagger: 0.05, duration: 0.14, ease: "power3.out" },
           0.22)
