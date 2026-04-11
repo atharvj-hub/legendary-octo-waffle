@@ -11,12 +11,14 @@
 :root {
   --bg: #040d17;
   --bg2: #07131f;
+  --bg-color: rgb(3, 10, 20); /* V2.0: Background temperature — GSAP will cool it on scroll */
   --surface: rgba(9, 22, 36, 0.72);
   --surface2: rgba(12, 29, 45, 0.9);
   --border: rgba(109, 201, 245, 0.12);
   --border2: rgba(109, 201, 245, 0.24);
   --accent: #66d8ff;
   --accent2: #9be7ff;
+  --accent-teal: #14b8a6;
   --signal: #2dd4bf;
   --abyss: #020617;
   --glass: rgba(155, 231, 255, 0.16);
@@ -40,9 +42,12 @@ body {
     radial-gradient(circle at 50% -12%, rgba(155, 231, 255, 0.18) 0%, transparent 32%),
     radial-gradient(circle at 16% 20%, rgba(45, 212, 191, 0.08) 0%, transparent 28%),
     linear-gradient(180deg, #081521 0%, #07131f 34%, #050d17 100%);
+  background-color: var(--bg-color);
   color: var(--text);
   font-family: var(--fb);
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body::before,
@@ -75,6 +80,67 @@ nav {
   z-index: 1;
 }
 
+/* =========================================
+   V2.0: THE DEPTH SANDWICH (Z-Index System)
+   ========================================= */
+
+/* The Spline Canvas Layer — future 3D background */
+.canvas-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none; /* Clicks pass through to UI */
+}
+
+/* Depth Layers */
+.layer-env  { z-index: 10; } /* Background plates, environmental framing */
+.layer-mid  { z-index: 20; } /* Floating specs, secondary cards, mid-elements */
+.layer-ui   { z-index: 30; } /* Primary text, CTA buttons, interactive lab */
+
+/* =========================================
+   V2.0: SCENE TRANSITIONS & MASKS
+   ========================================= */
+
+/* Torn-edge / wave clip-path foundation for scene reveals */
+.scene-mask {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  will-change: clip-path;
+}
+
+/* Floating spec utility */
+.floating-spec {
+  will-change: transform, opacity;
+  user-select: none;
+}
+
+/* =========================================
+   V2.0: LENIS SMOOTH SCROLL
+   ========================================= */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* ========================================= */
+
 .scene-plate {
   position: absolute;
   inset: 0;
@@ -87,8 +153,12 @@ nav {
 
 section {
   position: relative;
+  width: 100%;
   z-index: 1;
   isolation: isolate;
+  margin: 0;     /* V2.0: Remove gaps for continuous scroll */
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .campaign-timeline {
@@ -2432,8 +2502,153 @@ nav {
   line-height: 1.5;
 }
 
-/* ── Fix 10.5: Reduced motion ── */
+/* =========================================
+   V2.0: MAGNETIC BUTTON
+   ========================================= */
+.magnetic-zone {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  cursor: pointer;
+}
+
+.magnetic-btn {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 36px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--signal) 100%);
+  color: var(--abyss);
+  font-family: var(--fm);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: none;
+  outline: none;
+  transition: box-shadow 0.3s ease;
+}
+
+.magnetic-btn:hover {
+  box-shadow:
+    0 0 32px rgba(102, 216, 255, 0.3),
+    0 0 64px rgba(45, 212, 191, 0.15);
+}
+
+.magnetic-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.magnetic-label {
+  position: relative;
+  z-index: 20;
+  pointer-events: none;
+}
+
+/* =========================================
+   V2.0: SPLINE LOADING STATE
+   ========================================= */
+.spline-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+.spline-loading-text {
+  font-family: var(--fm);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--text3);
+  text-transform: uppercase;
+}
+
+/* =========================================
+   V2.0: /test-3d SANDBOX PAGE
+   ========================================= */
+.test3d-narrative {
+  position: relative;
+  z-index: 1;
+}
+
+.test3d-scene {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 80px 48px;
+}
+
+.test3d-content {
+  max-width: 640px;
+  text-align: center;
+}
+
+.test3d-kicker {
+  font-family: var(--fm);
+  font-size: 11px;
+  letter-spacing: 0.26em;
+  color: var(--signal);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+
+.test3d-title {
+  font-family: var(--fd);
+  font-size: clamp(36px, 6vw, 72px);
+  font-weight: 300;
+  color: var(--text);
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  margin-bottom: 24px;
+}
+
+.test3d-body {
+  font-family: var(--fb);
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text2);
+  margin-bottom: 32px;
+}
+
+.test3d-stats {
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.test3d-stats .floating-spec {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px 24px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(3, 10, 20, 0.4);
+  backdrop-filter: blur(12px);
+}
+
+.test3d-open  { background: transparent; }
+.test3d-mid   { background: rgba(3, 10, 20, 0.12); }
+.test3d-exit  { background: rgba(3, 10, 20, 0.18); }
+
+/* ── Fix 10.5 + V2.0: Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
+  :root {
+    --bg-color: #000609; /* V2.0: Default to final dark state, skip GSAP tween */
+  }
+
   /* Disable all CSS keyframe animations */
   .loader-current,
   .loader-wave::before,
