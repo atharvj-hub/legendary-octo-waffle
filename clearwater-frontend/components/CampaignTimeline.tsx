@@ -1,18 +1,16 @@
 /**
- * CampaignTimeline — Master animation system for the campaign page.
+ * CampaignTimeline — V2.0 Master animation system.
  *
- * ANIMATION OWNERSHIP RULE (10.10):
- * All scroll-triggered story pacing (reveals, transitions, parallax depth)
- * is centralised here via a single master ScrollTrigger timeline.
+ * ARCHITECTURE:
+ * - Single master ScrollTrigger timeline drives all scroll-paced reveals.
+ * - HeroScene is PINNED for 150vh for scrollytelling immersion.
+ * - CTA section uses clip-path morphing to "grow" from center.
+ * - Background gradient interpolates warm→cold via CSS variable tween.
+ * - No images — all procedural.
  *
- * Local scene components (HeroScene, CTAScene, OceanLoader, card hover handlers)
- * should own ONLY:
- *   - Idle loops (e.g. floating motion, breathing)
- *   - Hover / pointer feedback
- *   - Click animations
- *
- * Do NOT add scroll-triggered timelines in individual scene files.
- * This keeps the campaign pacing predictable and avoids conflicts.
+ * ANIMATION OWNERSHIP RULE:
+ * Local scene components own ONLY idle loops, hover, and click animations.
+ * All scroll-triggered pacing lives here.
  */
 "use client";
 
@@ -25,16 +23,13 @@ type CampaignTimelineProps = {
   children: ReactNode;
 };
 
-const wavePathA = "M0,100 C300,180 600,20 900,100 C1200,180 1440,60 1440,60 L1440,200 L0,200 Z";
-const wavePathB = "M0,120 C300,60 600,160 900,80 C1200,40 1440,140 1440,140 L1440,200 L0,200 Z";
-const transitionBeats = [0.14, 0.33, 0.6, 0.8];
-const particleCount = 56;
+const particleCount = 40;
 
-const ambientParticles = Array.from({ length: particleCount }, (_, index) => ({
-  left: (index * 19 + (index % 7) * 9) % 100,
-  top: (index * 31 + (index % 5) * 13) % 100,
-  size: 1.5 + (index % 4) * 0.65,
-  opacity: 0.18 + (index % 5) * 0.06,
+const ambientParticles = Array.from({ length: particleCount }, (_, i) => ({
+  left: (i * 19 + (i % 7) * 9) % 100,
+  top: (i * 31 + (i % 5) * 13) % 100,
+  size: 1.5 + (i % 4) * 0.65,
+  opacity: 0.12 + (i % 5) * 0.04,
 }));
 
 export default function CampaignTimeline({ children }: CampaignTimelineProps) {
@@ -43,12 +38,12 @@ export default function CampaignTimeline({ children }: CampaignTimelineProps) {
 
   useEffect(() => {
     const root = rootRef.current;
-    if (!root) {
-      return;
-    }
+    if (!root) return;
 
     const ctx = gsap.context(() => {
       const q = gsap.utils.selector(root);
+
+      // ── INITIAL STATES ──
       const revealTargets = [
         ...q(".hero-left"),
         ...q(".hero-left .eyebrow"),
@@ -62,274 +57,177 @@ export default function CampaignTimeline({ children }: CampaignTimelineProps) {
         ...q(".cta-lbl"),
         ...q(".cta-body"),
         ...q(".cta-chip"),
-        ...q(".enter-btn"),
         ...q(".enter-magnetic"),
         ...q(".lab-hdr"),
         ...q(".lab-wrap"),
       ];
 
       gsap.set(revealTargets, { opacity: 0, y: 30 });
-
-      // V2.0 Typography: set initial states for character/word reveals
       gsap.set(q(".hero-split-char"), { opacity: 0, y: 32, rotateX: 40, transformOrigin: "50% 100%" });
       gsap.set(q(".cards-split-word"), { opacity: 0, y: 24, rotateX: 20, transformOrigin: "50% 100%" });
-      gsap.set(q(".floating-stat"), { opacity: 0, y: 28, scale: 0.92 });
-      gsap.set(q(".card-spec-float"), { opacity: 0, y: 16, scale: 0.9 });
-      gsap.set(q("[data-depth='background']"), { yPercent: 0, scale: 1.03 });
-      gsap.set(q("[data-depth='mid']"), { yPercent: 0 });
-      gsap.set(q("[data-depth='foreground']"), { yPercent: 0 });
-      gsap.set(q(".campaign-light-pass"), { autoAlpha: 0.68, xPercent: -120 });
-      gsap.set(q(".campaign-particle"), { autoAlpha: 0.18, x: 0, y: 0 });
-      gsap.set(q(".card, .hero-chip, .cta-chip, .upload-z"), { "--panel-breath": 0.04 });
-      gsap.set(q(".campaign-wave-transition"), { autoAlpha: 0, yPercent: 96, scaleY: 0.94 });
+      gsap.set(q(".floating-stat"), { opacity: 0, y: 40, scale: 0.92 });
+      gsap.set(q(".card-spec-float"), { opacity: 0, y: 24, scale: 0.9 });
+
+      // CTA clip-path starts collapsed to center (Phase 4)
+      gsap.set(q(".cta-section"), { clipPath: "circle(0% at 50% 50%)" });
 
       if (reducedMotion) {
         gsap.set(revealTargets, { opacity: 1, y: 0 });
-        gsap.set(q("[data-depth='background'], [data-depth='mid'], [data-depth='foreground']"), { yPercent: 0, scale: 1 });
-        gsap.set(q(".campaign-light-pass, .campaign-particle, .campaign-wave-transition"), { autoAlpha: 0 });
-        // V2.0: ensure split text and stats visible in reduced motion
         gsap.set(q(".hero-split-char, .cards-split-word"), { opacity: 1, y: 0, rotateX: 0 });
         gsap.set(q(".floating-stat, .card-spec-float"), { opacity: 1, y: 0, scale: 1 });
+        gsap.set(q(".cta-section"), { clipPath: "circle(150% at 50% 50%)" });
         return;
       }
 
-      gsap.to(q(".campaign-light-pass"), {
-        xPercent: 120,
-        duration: 7.2,
-        repeat: -1,
-        ease: "none",
-      });
-
-      gsap.to(q(".campaign-ambient-drift"), {
-        xPercent: -3,
-        yPercent: -1.6,
-        duration: 9,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
-
+      // ── AMBIENT LOOPS ──
       gsap.to(q(".campaign-particle"), {
         y: () => gsap.utils.random(-18, -44),
         x: () => gsap.utils.random(-10, 12),
-        autoAlpha: () => gsap.utils.random(0.24, 0.62),
+        autoAlpha: () => gsap.utils.random(0.2, 0.5),
         duration: () => gsap.utils.random(3.2, 6.8),
         repeat: -1,
         yoyo: true,
         ease: "sine.inOut",
-        stagger: {
-          each: 0.035,
-          from: "random",
-        },
+        stagger: { each: 0.04, from: "random" },
       });
 
-      gsap.to(q(".card, .hero-chip, .cta-chip, .upload-z"), {
-        "--panel-breath": 0.12,
-        duration: () => gsap.utils.random(3.4, 5.8),
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-        stagger: {
-          each: 0.12,
-          from: "random",
-        },
+      gsap.to(q("[data-breathe]"), {
+        y: 3, scale: 1.006, opacity: 0.98,
+        duration: 3.4, repeat: -1, yoyo: true, ease: "sine.inOut",
       });
 
-      gsap.to(q(".campaign-wave-path, .campaign-wave-depth, .campaign-wave-highlight, .campaign-wave-caustic-path"), {
-        attr: { d: wavePathB },
-        duration: 2.8,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
+      // ── PHASE 4: HERO SECTION PINNING (150vh scroll-through) ──
+      const heroSection = root.querySelector("#hero-section");
+      if (heroSection) {
+        gsap.timeline({
+          scrollTrigger: {
+            trigger: heroSection,
+            start: "top top",
+            end: "+=150%",
+            pin: true,
+            pinSpacing: true,
+            scrub: 1,
+          },
+        })
+        // While pinned: the procedural background shifts
+        .to(q(".hero-gradient"), {
+          background: "radial-gradient(circle at 40% 30%, rgba(20,184,166,0.08) 0%, transparent 50%), linear-gradient(180deg, #050d17 0%, #020408 100%)",
+          duration: 1,
+        }, 0)
+        // Geometric grid drifts
+        .to(q("#hero-section .scene-grid"), {
+          backgroundPosition: "20px 20px",
+          opacity: 0.06,
+          duration: 1,
+        }, 0);
+      }
 
-      gsap.to(q(".campaign-wave-displacement"), {
-        attr: { scale: 10 },
-        duration: 3.2,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
-
-      gsap.to(q(".campaign-wave-drift"), {
-        x: -80,
-        duration: 6,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
-
-      gsap.to(q(".campaign-wave-material"), {
-        scaleY: 1.02,
-        duration: 2.5,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
-
-      gsap.to(q(".campaign-wave-caustics"), {
-        backgroundPosition: "180% 0",
-        duration: 6,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
-
+      // ── PHASE 2: MASTER SCROLL TIMELINE ──
       const masterTimeline = gsap.timeline({
         defaults: { ease: "none" },
         scrollTrigger: {
           trigger: root,
           start: "top top",
           end: "bottom bottom",
-          scrub: 1.65,
+          scrub: 1.4,
         },
       });
 
+      // Background color temperature: warm ocean → pitch black
       masterTimeline
-        .to(q("[data-depth='background']"), { yPercent: -5, scale: 1.055, stagger: 0.02 }, 0)
-        .to(q("[data-depth='mid']"), { yPercent: -10, stagger: 0.02 }, 0)
-        .to(q("[data-depth='foreground']"), { yPercent: -14, stagger: 0.02 }, 0)
+        .to(root, {
+          "--bg-temperature": "#000000",
+          duration: 1,
+          ease: "none",
+        }, 0)
+
+        // ── SURFACE → HERO transition ──
         .to(q(".surface-cover"), { y: -10, opacity: 0.88 }, 0.04)
-        .to(q(".surface-depth-plate"), { opacity: 0.46, yPercent: -5, scale: 1.02 }, 0.06)
-        .to(q(".surface-plate"), { filter: "blur(1.6px) brightness(0.92) saturate(0.86)" }, 0.07)
-        .to(q(".surface-dark-overlay"), { opacity: 0.34 }, 0.1)
-        .to(q(".hero-left"), { opacity: 1, y: 0, duration: 0.1 }, 0.18)
-        .to(q(".hero-left .eyebrow"), { opacity: 1, y: 0, duration: 0.06 }, 0.19)
-        .to(q(".hero-h"), { opacity: 1, y: 0, duration: 0.06 }, 0.2)
-        // Bug 2 fix: Character-by-character reveal with wider stagger for Apple typing effect
+        .to(q(".surface-gradient"), { opacity: 0.4 }, 0.08)
+
+        // ── HERO REVEALS ──
+        .to(q(".hero-left"), { opacity: 1, y: 0, duration: 0.08 }, 0.14)
+        .to(q(".hero-left .eyebrow"), { opacity: 1, y: 0, duration: 0.05 }, 0.15)
+        .to(q(".hero-h"), { opacity: 1, y: 0, duration: 0.05 }, 0.16)
+
+        // Character-by-character reveal (Apple typing effect)
         .fromTo(q(".hero-split-char"),
           { opacity: 0, y: 10 },
-          {
-            opacity: 1,
-            y: 0,
-            rotateX: 0,
-            stagger: 0.02,   // Wider stagger = visible typing effect
-            duration: 0.16,
-            ease: "none",
-          }, 0.2)
+          { opacity: 1, y: 0, rotateX: 0, stagger: 0.02, duration: 0.14, ease: "none" },
+          0.16)
+
         .to(q(".hero-body, .hero-credits, .hero-chip"), {
-          opacity: 1,
-          y: 0,
-          stagger: 0.012,
-          duration: 0.1,
-        }, 0.26)
-        .to(q(".hero-right"), { opacity: 1, y: 0, duration: 0.12 }, 0.2)
-        // Bug 3 fix: Floating stats rise from below with pronounced vertical movement
+          opacity: 1, y: 0, stagger: 0.01, duration: 0.08,
+        }, 0.22)
+
+        .to(q(".hero-right"), { opacity: 1, y: 0, duration: 0.1 }, 0.16)
+
+        // Floating stats rise from below
         .fromTo(q(".floating-stat"),
           { y: 40, opacity: 0, scale: 0.92 },
-          {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            stagger: 0.06,   // Wider stagger = sequential float-up
-            duration: 0.16,
-            ease: "power3.out",
-          }, 0.26)
-        .to(q(".hero-right"), { filter: "blur(3px) brightness(0.94) saturate(0.92)", scale: 1.05, duration: 0.18 }, 0.30)
-        .to(q(".cards-copy"), { opacity: 1, y: 0, duration: 0.16 }, 0.36)
-        // Bug 2 fix: Word-by-word reveal with wider stagger
+          { y: 0, opacity: 1, scale: 1, stagger: 0.05, duration: 0.14, ease: "power3.out" },
+          0.22)
+
+        // ── CARDS REVEALS ──
+        .to(q(".cards-copy"), { opacity: 1, y: 0, duration: 0.12 }, 0.36)
+
+        // Word-by-word reveal
         .fromTo(q(".cards-split-word"),
           { opacity: 0, y: 12 },
-          {
-            opacity: 1,
-            y: 0,
-            rotateX: 0,
-            stagger: 0.03,
-            duration: 0.18,
-            ease: "none",
-          }, 0.37)
-        .to(q(".card"), { opacity: 1, y: 0, rotateX: 0, scale: 1, stagger: 0.025, duration: 0.18 }, 0.40)
-        // Bug 3 fix: Card spec labels float up
+          { opacity: 1, y: 0, rotateX: 0, stagger: 0.03, duration: 0.16, ease: "none" },
+          0.37)
+
+        .to(q(".card"), { opacity: 1, y: 0, rotateX: 0, scale: 1, stagger: 0.025, duration: 0.16 }, 0.42)
+
+        // Card spec labels float up
         .fromTo(q(".card-spec-float"),
           { y: 24, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            stagger: 0.04,
-            duration: 0.12,
-            ease: "power3.out",
-          }, 0.44)
-        .to(q(".cta-lbl, .cta-body"), { opacity: 1, y: 0, stagger: 0.02, duration: 0.08 }, 0.66)
-        .to(q(".cta-chip"), { opacity: 1, y: 0, stagger: 0.015, duration: 0.08 }, 0.7)
-        .to(q(".enter-btn, .enter-magnetic"), { opacity: 1, y: 0, duration: 0.1 }, 0.73)
-        .to(q(".lab-hdr"), { opacity: 1, y: 0, duration: 0.1 }, 0.84)
-        .to(q(".lab-wrap"), { opacity: 1, y: 0, duration: 0.1 }, 0.88);
+          { y: 0, opacity: 1, scale: 1, stagger: 0.04, duration: 0.1, ease: "power3.out" },
+          0.46)
 
-      q(".campaign-wave-transition").forEach((wave, index) => {
-        const beat = transitionBeats[index] ?? 0.5;
+        // ── PHASE 4: CTA CLIP-PATH MORPHING ──
+        // The CTA section "grows" from a circle in the center
+        .to(q(".cta-section"), {
+          clipPath: "circle(150% at 50% 50%)",
+          duration: 0.12,
+          ease: "power2.inOut",
+        }, 0.60)
 
-        masterTimeline
-          .to(wave, {
-            autoAlpha: 0.92,
-            yPercent: 8,
-            scaleY: 1,
-            duration: 0.035,
-            immediateRender: false,
-          }, beat)
-          .to(wave, {
-            autoAlpha: 0,
-            yPercent: -82,
-            scaleY: 0.88,
-            duration: 0.065,
-          }, beat + 0.035);
-      });
+        .to(q(".cta-lbl, .cta-body"), { opacity: 1, y: 0, stagger: 0.02, duration: 0.08 }, 0.65)
+        .to(q(".cta-chip"), { opacity: 1, y: 0, stagger: 0.015, duration: 0.06 }, 0.69)
+        .to(q(".enter-magnetic"), { opacity: 1, y: 0, duration: 0.08 }, 0.72)
 
-      gsap.to(q("[data-breathe]"), {
-        y: 3,
-        scale: 1.006,
-        opacity: 0.98,
-        duration: 3.4,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
+        // ── LAB REVEALS ──
+        .to(q(".lab-hdr"), { opacity: 1, y: 0, duration: 0.08 }, 0.84)
+        .to(q(".lab-wrap"), { opacity: 1, y: 0, duration: 0.08 }, 0.88);
+
     }, root);
 
     return () => ctx.revert();
   }, [reducedMotion]);
 
   return (
-    <div className="campaign-timeline" ref={rootRef}>
+    <div
+      className="campaign-timeline"
+      ref={rootRef}
+      style={{ "--bg-temperature": "#030a14" } as CSSProperties}
+    >
       {children}
-      <div className="campaign-ambient-drift" aria-hidden="true" />
-      <div className="campaign-light-pass" aria-hidden="true" />
+      {/* Ambient particles — lightweight CSS */}
       <div className="campaign-particles" aria-hidden="true">
-        {ambientParticles.map((particle, index) => (
+        {ambientParticles.map((p, i) => (
           <span
             className="campaign-particle"
-            key={index}
+            key={i}
             style={{
-              "--particle-left": `${particle.left}%`,
-              "--particle-top": `${particle.top}%`,
-              "--particle-size": `${particle.size}px`,
-              "--particle-opacity": particle.opacity,
+              "--particle-left": `${p.left}%`,
+              "--particle-top": `${p.top}%`,
+              "--particle-size": `${p.size}px`,
+              "--particle-opacity": p.opacity,
             } as CSSProperties}
           />
         ))}
       </div>
-      {transitionBeats.map((_, index) => (
-        <div className="campaign-wave-transition" key={index} aria-hidden="true">
-          <div className="campaign-wave-drift campaign-wave-material">
-            <div className="campaign-wave-body" />
-            <div className="campaign-wave-haze" />
-            <svg className="campaign-wave-svg" viewBox="0 0 1440 200" preserveAspectRatio="none">
-              <defs>
-                <filter id={`wave-turbulence-${index}`} x="-4%" y="-12%" width="108%" height="124%">
-                  <feTurbulence baseFrequency="0.012 0.028" numOctaves="2" seed={17 + index} result="noise" />
-                  <feDisplacementMap className="campaign-wave-displacement" in="SourceGraphic" in2="noise" scale="6" xChannelSelector="R" yChannelSelector="G" />
-                </filter>
-              </defs>
-              <path className="campaign-wave-depth" d={wavePathA} filter={`url(#wave-turbulence-${index})`} />
-              <path className="campaign-wave-path" d={wavePathA} filter={`url(#wave-turbulence-${index})`} />
-              <path className="campaign-wave-highlight" d={wavePathA} filter={`url(#wave-turbulence-${index})`} />
-              <path className="campaign-wave-caustic-path" d={wavePathA} />
-            </svg>
-            <div className="campaign-wave-caustics" />
-            <div className="campaign-wave-foam" />
-          </div>
-        </div>
-      ))}
     </div>
   );
 }

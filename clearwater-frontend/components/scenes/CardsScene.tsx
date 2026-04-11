@@ -1,75 +1,43 @@
 'use client';
 
-import Image from 'next/image';
 import type { CSSProperties, MouseEvent } from 'react';
 import { useEffect, useRef } from 'react';
-import { campaignAssets } from '../../lib/assets/manifest';
 import { gsap } from '../../lib/gsap';
 
 const cards = [
   {
-    number: '01 - Physics',
+    number: '01 · Physics',
     title: 'Dark Channel Prior',
-    body: 'Explicit physical modeling of light scattering and attenuation. Fast, deterministic, GPU-free - the first stage of every restoration run.',
+    body: 'Explicit physical modeling of light scattering and attenuation. Fast, deterministic, GPU-free.',
     cue: 'Water pathfinding',
-    image: campaignAssets.cards.reefMemory,
   },
   {
-    number: '02 - Learning',
+    number: '02 · Learning',
     title: 'U-Net Encoder',
-    body: '64 to 128 to 256 to 512 to 1024 channel progression. Skip connections preserve spatial detail the encoder would otherwise discard.',
+    body: '64→128→256→512→1024 channel progression. Skip connections preserve spatial detail.',
     cue: 'Semantic recovery',
-    image: campaignAssets.cards.diverLens,
   },
   {
-    number: '03 - Fusion',
+    number: '03 · Fusion',
     title: '6-ch Hybrid',
-    body: 'Raw signal and DCP output are concatenated into a 6-channel tensor. The network learns to arbitrate between both at every pixel.',
+    body: 'Raw signal and DCP output concatenated into a 6-channel tensor, arbitrated at every pixel.',
     cue: 'Human-grade finish',
-    image: campaignAssets.cards.sonarAbyss,
   },
 ];
 
-/** Word-level split for the section heading */
-function WordSplit({ text }: { text: string }) {
-  const words = text.split(/\s+/);
-  return (
-    <>
-      {words.map((word, i) => (
-        <span key={`${word}-${i}`}>
-          <span
-            className="cards-split-word"
-            data-index={i}
-            aria-hidden="true"
-            style={{ display: "inline-block" }}
-          >
-            {word}
-          </span>
-          {i < words.length - 1 && (
-            <span aria-hidden="true" style={{ display: "inline-block" }}>{"\u00A0"}</span>
-          )}
-        </span>
-      ))}
-    </>
-  );
-}
+import { SplitWords } from '../../lib/splitText';
 
 export default function CardsScene() {
   const compRef = useRef<HTMLElement>(null);
-  const copyRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<HTMLDivElement[]>([]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       const q = gsap.utils.selector(compRef.current);
-
       gsap.set(cardRefs.current, { scale: 0.96, rotateX: 8 });
-      // Word-level initial state
       gsap.set(q(".cards-split-word"), { opacity: 0, y: 24, rotateX: 20, transformOrigin: "50% 100%" });
-      // Floating spec numbers in card heads
       gsap.set(q(".card-spec-float"), { opacity: 0, y: 16, scale: 0.9 });
     }, compRef);
-
     return () => ctx.revert();
   }, []);
 
@@ -80,7 +48,6 @@ export default function CardsScene() {
     const y = ((event.clientY - bounds.top) / bounds.height) * 100;
     const rotateY = ((x - 50) / 50) * 5;
     const rotateX = ((50 - y) / 50) * 4;
-
     target.style.setProperty('--mx', `${x}%`);
     target.style.setProperty('--my', `${y}%`);
     target.style.setProperty('--rx', `${rotateX.toFixed(2)}deg`);
@@ -97,10 +64,14 @@ export default function CardsScene() {
 
   return (
     <section className="cards-section" ref={compRef} id="cards-section">
-      <div className="cards-copy" ref={copyRef}>
+      {/* Procedural gradient — no images */}
+      <div className="scene-gradient cards-gradient" aria-hidden="true" />
+      <div className="scene-grid" aria-hidden="true" />
+
+      <div className="cards-copy">
         <p className="cards-eyebrow">Dive protocol</p>
-        <h2 className="cards-title" aria-label="A restoration pipeline that behaves like an expedition.">
-          <WordSplit text="A restoration pipeline that behaves like an expedition." />
+        <h2 className="cards-title" data-breathe>
+          <SplitWords text="A restoration pipeline that behaves like an expedition." className="cards-split-word" />
         </h2>
         <p className="cards-body">Each chapter moves deeper into the image: physics for water behavior, learning for scene understanding, and fusion for a premium final frame.</p>
       </div>
@@ -109,22 +80,13 @@ export default function CardsScene() {
           <div
             key={card.title}
             className="card"
-            ref={(element) => {
-              if (element) {
-                cardRefs.current[index] = element;
-              }
-            }}
+            ref={(el) => { if (el) cardRefs.current[index] = el; }}
             onMouseMove={handleMove}
             onMouseLeave={resetTilt}
             style={{ '--mx': '50%', '--my': '50%', '--rx': '0deg', '--ry': '0deg' } as CSSProperties}
           >
-            <Image
-              src={card.image.path}
-              alt={card.image.alt}
-              fill
-              sizes="(max-width: 900px) 100vw, 33vw"
-              className="card-plate"
-            />
+            {/* No image — procedural card background */}
+            <div className="card-gradient" aria-hidden="true" />
             <div className="card-inner">
               <div className="card-head">
                 <div className="card-num">{card.number}</div>

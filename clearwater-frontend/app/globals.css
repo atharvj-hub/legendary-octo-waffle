@@ -139,8 +139,78 @@ html.lenis, html.lenis body {
   pointer-events: none;
 }
 
-/* ========================================= */
+/* =========================================
+   V2.0: PROCEDURAL BACKGROUNDS (No Images)
+   ========================================= */
 
+/* Scene gradient — positioned behind all content */
+.scene-gradient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+
+.surface-gradient {
+  background:
+    radial-gradient(ellipse at 50% -10%, rgba(102, 216, 255, 0.12) 0%, transparent 45%),
+    radial-gradient(ellipse at 20% 60%, rgba(45, 212, 191, 0.06) 0%, transparent 40%),
+    linear-gradient(180deg, #081521 0%, #040d17 100%);
+}
+
+.hero-gradient {
+  background:
+    radial-gradient(circle at 65% 40%, rgba(102, 216, 255, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 20% 70%, rgba(45, 212, 191, 0.05) 0%, transparent 35%),
+    linear-gradient(180deg, #050d17 0%, #030a14 100%);
+}
+
+.cards-gradient {
+  background:
+    radial-gradient(circle at 50% 30%, rgba(102, 216, 255, 0.06) 0%, transparent 40%),
+    linear-gradient(180deg, #030a14 0%, #020609 100%);
+}
+
+.cta-gradient {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(20, 184, 166, 0.1) 0%, transparent 50%),
+    linear-gradient(180deg, #020609 0%, #000000 100%);
+}
+
+/* Card procedural backgrounds */
+.card-gradient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(102, 216, 255, 0.08) 0%, transparent 60%),
+    linear-gradient(135deg, rgba(9, 22, 36, 0.9) 0%, rgba(3, 10, 20, 0.95) 100%);
+}
+
+/* Geometric grid overlay — Apple-tier technical feel */
+.scene-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.035;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(102, 216, 255, 0.3) 59px, rgba(102, 216, 255, 0.3) 60px),
+    repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(102, 216, 255, 0.3) 59px, rgba(102, 216, 255, 0.3) 60px);
+  mask-image: radial-gradient(ellipse at 50% 40%, black 30%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 40%, black 30%, transparent 70%);
+}
+
+/* Background temperature — GSAP tweens this CSS variable */
+.campaign-timeline {
+  position: relative;
+  overflow: clip;
+  background-color: var(--bg-temperature, #030a14);
+}
+
+/* Preserve scene-plate for lab and any remaining image elements */
 .scene-plate {
   position: absolute;
   inset: 0;
@@ -156,14 +226,9 @@ section {
   width: 100%;
   z-index: 1;
   isolation: isolate;
-  margin: 0;     /* V2.0: Remove gaps for continuous scroll */
+  margin: 0;
   padding-top: 0;
   padding-bottom: 0;
-}
-
-.campaign-timeline {
-  position: relative;
-  overflow: clip;
 }
 
 .campaign-ambient-drift,

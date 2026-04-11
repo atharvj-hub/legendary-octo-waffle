@@ -1,19 +1,6 @@
-/**
- * HeroScene — System hero section with procedural restoration-lens focal object.
- *
- * UPGRADE PATH (10.9):
- * The `restoration-core` element is currently procedural CSS — not final art.
- * When the final hero asset is ready (Blender GLB, Spline embed, or video sprite sheet):
- *   1. Replace the `.hero-right` children with a <Canvas> / <Spline> / <video> component.
- *   2. Keep the surrounding hero-left layout, credits, and prompt chips unchanged.
- *   3. Update `manifest.ts` with the real asset path under `future3d.heroObject`.
- *   4. Add a mobile-optimised variant (smaller, no parallax) to avoid layout issues.
- */
 'use client';
 
-import Image from 'next/image';
 import { useEffect, useRef } from 'react';
-import { campaignAssets } from '../../lib/assets/manifest';
 import { gsap } from '../../lib/gsap';
 import { useReducedMotion } from '../../lib/useReducedMotion';
 
@@ -23,46 +10,20 @@ const prompts = [
   '/restore diver silhouette',
 ];
 
-/** Splits a line into character spans for GSAP stagger */
-function CharSplit({ text, offset = 0 }: { text: string; offset?: number }) {
-  return (
-    <>
-      {text.split("").map((char, i) => (
-        <span
-          key={`${char}-${i}`}
-          className="hero-split-char"
-          data-index={i + offset}
-          aria-hidden="true"
-          style={{ display: "inline-block" }}
-        >
-          {char === " " ? "\u00A0" : char}
-        </span>
-      ))}
-    </>
-  );
-}
+import { SplitChars, FloatingStat } from '../../lib/splitText';
 
 export default function HeroScene() {
   const reducedMotion = useReducedMotion();
   const compRef = useRef<HTMLElement>(null);
-  const leftRef = useRef<HTMLDivElement>(null);
-  const rightRef = useRef<HTMLDivElement>(null);
-  const eyebrowRef = useRef<HTMLParagraphElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
-  const bodyRef = useRef<HTMLParagraphElement>(null);
-  const creditsRef = useRef<HTMLDivElement>(null);
   const coreRef = useRef<HTMLDivElement>(null);
-  const promptsRef = useRef<HTMLButtonElement[]>([]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       const q = gsap.utils.selector(compRef.current);
 
-      if (rightRef.current) gsap.set(rightRef.current, { x: 32, scale: 1, filter: 'blur(0px) brightness(1)' });
-
-      // Set initial states for character reveals and floating stats
       gsap.set(q(".hero-split-char"), { opacity: 0, y: 32, rotateX: 40, transformOrigin: "50% 100%" });
-      gsap.set(q(".floating-stat"), { opacity: 0, y: 28, scale: 0.92 });
+      gsap.set(q(".floating-stat"), { opacity: 0, y: 40, scale: 0.92 });
 
       if (reducedMotion) {
         gsap.set(q(".hero-split-char"), { opacity: 1, y: 0, rotateX: 0 });
@@ -70,30 +31,22 @@ export default function HeroScene() {
         return;
       }
 
-      if (headingRef.current) gsap.to(headingRef.current, {
-        y: -5,
-        duration: 2.6,
-        ease: 'sine.inOut',
-        repeat: -1,
-        yoyo: true,
-      });
+      // Subtle idle breathing on heading
+      if (headingRef.current) {
+        gsap.to(headingRef.current, {
+          y: -5, duration: 2.6, ease: 'sine.inOut', repeat: -1, yoyo: true,
+        });
+      }
 
+      // Procedural core idle rotation
       if (coreRef.current) {
         gsap.to(coreRef.current, {
-          y: -8,
-          rotate: 0.6,
-          duration: 4.2,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
+          y: -8, rotate: 0.6, duration: 4.2, repeat: -1, yoyo: true, ease: 'sine.inOut',
         });
       }
 
       gsap.to('.core-scan', {
-        yPercent: 160,
-        duration: 3.8,
-        repeat: -1,
-        ease: 'sine.inOut',
+        yPercent: 160, duration: 3.8, repeat: -1, ease: 'sine.inOut',
       });
     }, compRef);
 
@@ -101,11 +54,9 @@ export default function HeroScene() {
   }, [reducedMotion]);
 
   const scrollToLab = () => {
-    const labSection = document.getElementById('lab-section');
-    labSection?.scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('lab-section')?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Split the heading lines for character animation
   const line1 = "The ocean holds";
   const line2 = "secrets. ";
   const line2em = "We restore";
@@ -113,72 +64,52 @@ export default function HeroScene() {
 
   return (
     <section className="hero-section" ref={compRef} id="hero-section">
-      <Image
-        src={campaignAssets.hero.plate.path}
-        alt={campaignAssets.hero.plate.alt}
-        fill
-        sizes="100vw"
-        className="scene-plate hero-plate"
-        data-depth="background"
-      />
-      <div className="hero-left" ref={leftRef} data-depth="foreground">
-        <p className="eyebrow" ref={eyebrowRef}>Project - 2026</p>
+      {/* Procedural gradient background — no images */}
+      <div className="scene-gradient hero-gradient" aria-hidden="true" />
+      <div className="scene-grid" aria-hidden="true" />
+
+      <div className="hero-left" data-depth="foreground">
+        <p className="eyebrow">Project · 2026</p>
         <h2 className="hero-h" ref={headingRef} data-breathe aria-label="The ocean holds secrets. We restore what was lost.">
-          <span className="hero-line">
-            <CharSplit text={line1} offset={0} />
-          </span>
+          <span className="hero-line"><SplitChars text={line1} offset={0} className="hero-split-char" /></span>
           <br />
           <span className="hero-line">
-            <CharSplit text={line2} offset={line1.length} />
+            <SplitChars text={line2} offset={line1.length} className="hero-split-char" />
             <em style={{ fontStyle: "italic", color: "var(--accent)" }}>
-              <CharSplit text={line2em} offset={line1.length + line2.length} />
+              <SplitChars text={line2em} offset={line1.length + line2.length} className="hero-split-char" />
             </em>
           </span>
           <br />
-          <span className="hero-line">
-            <CharSplit text={line3} offset={line1.length + line2.length + line2em.length} />
-          </span>
+          <span className="hero-line"><SplitChars text={line3} offset={line1.length + line2.length + line2em.length} className="hero-split-char" /></span>
         </h2>
-        <p className="hero-body" ref={bodyRef}>A hybrid deep-learning system combining Dark Channel Prior physics modeling with a custom U-Net architecture to restore clarity, color, and detail from degraded underwater imagery.</p>
-        <div className="hero-credits" ref={creditsRef}>
+        <p className="hero-body">A hybrid deep-learning system combining Dark Channel Prior physics modeling with a custom U-Net architecture to restore clarity, color, and detail from degraded underwater imagery.</p>
+        <div className="hero-credits">
           <div className="credit">
             <span className="credit-lbl">Domain</span>
             <span className="credit-val">Computer Vision</span>
           </div>
           <div className="credit">
             <span className="credit-lbl">Backend</span>
-            <span className="credit-val">FastAPI - Python</span>
+            <span className="credit-val">FastAPI · Python</span>
           </div>
           <div className="credit">
             <span className="credit-lbl">Model</span>
             <span className="credit-val">DCP + U-Net</span>
           </div>
         </div>
-        <p className="hero-note">Hero object is currently an interactive preview while final 3D art is in production.</p>
         <div className="hero-prompts">
-          {prompts.map((prompt, index) => (
-            <button
-              key={prompt}
-              type="button"
-              className="hero-chip"
-              ref={(element) => {
-                if (element) {
-                  promptsRef.current[index] = element;
-                }
-              }}
-              onClick={scrollToLab}
-            >
-              {prompt}
-            </button>
+          {prompts.map((prompt) => (
+            <button key={prompt} type="button" className="hero-chip" onClick={scrollToLab}>{prompt}</button>
           ))}
         </div>
       </div>
-      <div className="hero-right" ref={rightRef} data-depth="mid">
+
+      <div className="hero-right" ref={coreRef}>
         <div className="ring r1" />
         <div className="ring r2" />
         <div className="ring r3" />
         <div className="crosshair" />
-        <div className="restoration-core" ref={coreRef} aria-hidden="true">
+        <div className="restoration-core" aria-hidden="true">
           <div className="core-beam b1" />
           <div className="core-beam b2" />
           <div className="core-shell">
@@ -189,15 +120,9 @@ export default function HeroScene() {
             <div className="core-aperture" />
           </div>
         </div>
-        {/* Floating stats — will animate in via CampaignTimeline */}
-        <div className="floating-stat stat-float-1">
-          <span className="floating-stat-value">6ch</span>
-          <span className="floating-stat-label">Feature fusion</span>
-        </div>
-        <div className="floating-stat stat-float-2">
-          <span className="floating-stat-value">512×512</span>
-          <span className="floating-stat-label">Input resolution</span>
-        </div>
+        {/* Floating stats — animated by master timeline */}
+        <FloatingStat value="6ch" label="Feature fusion" className="stat-float-1" />
+        <FloatingStat value="512×512" label="Input resolution" className="stat-float-2" />
         <div className="dot d1" />
         <div className="dot d2" />
         <div className="dot d3" />

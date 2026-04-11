@@ -17,26 +17,28 @@ type SplitCharsProps = {
   text: string;
   className?: string;
   as?: keyof React.JSX.IntrinsicElements;
+  offset?: number;
 };
 
 type SplitWordsProps = {
   text: string;
   className?: string;
   as?: keyof React.JSX.IntrinsicElements;
+  offset?: number;
 };
 
 /**
  * Splits a string into individual character <span> elements.
  * Spaces become non-breaking &nbsp; spans to preserve layout.
  */
-export function SplitChars({ text, className = "split-char", as: Tag = "span" }: SplitCharsProps) {
+export function SplitChars({ text, className = "split-char", as: Tag = "span", offset = 0 }: SplitCharsProps) {
   return (
     <Tag aria-label={text} role="text">
       {text.split("").map((char, i) => (
         <span
           key={`${char}-${i}`}
           className={className}
-          data-index={i}
+          data-index={i + offset}
           aria-hidden="true"
           style={{ display: "inline-block" }}
         >
@@ -51,7 +53,7 @@ export function SplitChars({ text, className = "split-char", as: Tag = "span" }:
  * Splits a string into individual word <span> elements.
  * Preserves spaces between words as inline-block gaps.
  */
-export function SplitWords({ text, className = "split-word", as: Tag = "span" }: SplitWordsProps) {
+export function SplitWords({ text, className = "split-word", as: Tag = "span", offset = 0 }: SplitWordsProps) {
   const words = text.split(/\s+/);
   return (
     <Tag aria-label={text} role="text">
@@ -59,7 +61,7 @@ export function SplitWords({ text, className = "split-word", as: Tag = "span" }:
         <React.Fragment key={`${word}-${i}`}>
           <span
             className={className}
-            data-index={i}
+            data-index={i + offset}
             aria-hidden="true"
             style={{ display: "inline-block" }}
           >
