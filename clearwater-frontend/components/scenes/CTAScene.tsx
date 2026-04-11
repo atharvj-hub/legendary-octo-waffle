@@ -1,11 +1,11 @@
 'use client';
 
 import Image from 'next/image';
-import type { MouseEvent as ReactMouseEvent } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { campaignAssets } from '../../lib/assets/manifest';
 import { gsap } from '../../lib/gsap';
 import { useReducedMotion } from '../../lib/useReducedMotion';
+import MagneticButton from '../ui/MagneticButton';
 
 const promptChips = [
   '/restore coral mural',
@@ -18,74 +18,19 @@ export default function CTAScene() {
   const compRef = useRef<HTMLElement>(null);
   const labelRef = useRef<HTMLParagraphElement>(null);
   const bodyRef = useRef<HTMLParagraphElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
   const chipsRef = useRef<HTMLSpanElement[]>([]);
-  const [ripples, setRipples] = useState<{ id: number; top: number; left: number }[]>([]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       if (reducedMotion) return;
-      gsap.to(buttonRef.current, {
-        scale: 1.015,
-        duration: 3,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-      });
     }, compRef);
 
     return () => ctx.revert();
   }, [reducedMotion]);
 
-  const handleClick = (event: ReactMouseEvent<HTMLButtonElement>) => {
-    const button = event.currentTarget;
-    const bounds = button.getBoundingClientRect();
-    const newRipple = {
-      id: Date.now(),
-      top: event.clientY - bounds.top - 40,
-      left: event.clientX - bounds.left - 40,
-    };
-
-    setRipples((previous) => [...previous, newRipple]);
-
-    setTimeout(() => {
-      setRipples((previous) => previous.filter((ripple) => ripple.id !== newRipple.id));
-    }, 800);
-
-    setTimeout(() => {
-      const labSection = document.getElementById('lab-section');
-      labSection?.scrollIntoView({ behavior: 'smooth' });
-    }, 200);
-  };
-
-  const handleButtonMove = (event: ReactMouseEvent<HTMLButtonElement>) => {
-    if (reducedMotion) {
-      return;
-    }
-    const button = event.currentTarget;
-    const bounds = button.getBoundingClientRect();
-    const x = event.clientX - bounds.left - bounds.width / 2;
-    const y = event.clientY - bounds.top - bounds.height / 2;
-
-    gsap.to(button, {
-      x: x * 0.08,
-      y: y * 0.12,
-      duration: 0.35,
-      ease: 'power3.out',
-    });
-  };
-
-  const resetButton = () => {
-    if (!buttonRef.current) {
-      return;
-    }
-
-    gsap.to(buttonRef.current, {
-      x: 0,
-      y: 0,
-      duration: 0.45,
-      ease: 'power3.out',
-    });
+  const scrollToLab = () => {
+    const labSection = document.getElementById('lab-section');
+    labSection?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -115,23 +60,16 @@ export default function CTAScene() {
           </span>
         ))}
       </div>
-      <button
-        className="enter-btn"
-        onClick={handleClick}
-        onMouseMove={handleButtonMove}
-        onMouseLeave={resetButton}
-        ref={buttonRef}
-        data-depth="foreground"
-      >
-        Enter the Lab &rarr;
-        {ripples.map((ripple) => (
-          <span
-            key={ripple.id}
-            className="btn-ripple"
-            style={{ width: '80px', height: '80px', top: `${ripple.top}px`, left: `${ripple.left}px` }}
-          />
-        ))}
-      </button>
+      {/* Bug 4 fix: MagneticButton replaces the standard enter-btn */}
+      <div className="enter-magnetic" data-depth="foreground">
+        <MagneticButton
+          strength={0.5}
+          labelStrength={0.25}
+          onClick={scrollToLab}
+        >
+          Enter the Lab &rarr;
+        </MagneticButton>
+      </div>
     </section>
   );
 }

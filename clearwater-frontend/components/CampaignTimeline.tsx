@@ -63,6 +63,7 @@ export default function CampaignTimeline({ children }: CampaignTimelineProps) {
         ...q(".cta-body"),
         ...q(".cta-chip"),
         ...q(".enter-btn"),
+        ...q(".enter-magnetic"),
         ...q(".lab-hdr"),
         ...q(".lab-wrap"),
       ];
@@ -195,55 +196,63 @@ export default function CampaignTimeline({ children }: CampaignTimelineProps) {
         .to(q(".hero-left"), { opacity: 1, y: 0, duration: 0.1 }, 0.18)
         .to(q(".hero-left .eyebrow"), { opacity: 1, y: 0, duration: 0.06 }, 0.19)
         .to(q(".hero-h"), { opacity: 1, y: 0, duration: 0.06 }, 0.2)
-        // V2.0: Character-by-character reveal for hero heading
-        .to(q(".hero-split-char"), {
-          opacity: 1,
-          y: 0,
-          rotateX: 0,
-          stagger: 0.008,
-          duration: 0.12,
-          ease: "power3.out",
-        }, 0.2)
+        // Bug 2 fix: Character-by-character reveal with wider stagger for Apple typing effect
+        .fromTo(q(".hero-split-char"),
+          { opacity: 0, y: 10 },
+          {
+            opacity: 1,
+            y: 0,
+            rotateX: 0,
+            stagger: 0.02,   // Wider stagger = visible typing effect
+            duration: 0.16,
+            ease: "none",
+          }, 0.2)
         .to(q(".hero-body, .hero-credits, .hero-chip"), {
           opacity: 1,
           y: 0,
           stagger: 0.012,
           duration: 0.1,
-        }, 0.24)
+        }, 0.26)
         .to(q(".hero-right"), { opacity: 1, y: 0, duration: 0.12 }, 0.2)
-        // V2.0: Floating stats rise into position
-        .to(q(".floating-stat"), {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          stagger: 0.04,
-          duration: 0.12,
-          ease: "power3.out",
-        }, 0.24)
-        .to(q(".hero-right"), { filter: "blur(3px) brightness(0.94) saturate(0.92)", scale: 1.05, duration: 0.18 }, 0.27)
-        .to(q(".cards-copy"), { opacity: 1, y: 0, duration: 0.16 }, 0.34)
-        // V2.0: Word-by-word reveal for cards heading
-        .to(q(".cards-split-word"), {
-          opacity: 1,
-          y: 0,
-          rotateX: 0,
-          stagger: 0.02,
-          duration: 0.14,
-          ease: "power3.out",
-        }, 0.35)
-        .to(q(".card"), { opacity: 1, y: 0, rotateX: 0, scale: 1, stagger: 0.025, duration: 0.18 }, 0.38)
-        // V2.0: Card spec labels float up
-        .to(q(".card-spec-float"), {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          stagger: 0.03,
-          duration: 0.1,
-          ease: "power3.out",
-        }, 0.42)
+        // Bug 3 fix: Floating stats rise from below with pronounced vertical movement
+        .fromTo(q(".floating-stat"),
+          { y: 40, opacity: 0, scale: 0.92 },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            stagger: 0.06,   // Wider stagger = sequential float-up
+            duration: 0.16,
+            ease: "power3.out",
+          }, 0.26)
+        .to(q(".hero-right"), { filter: "blur(3px) brightness(0.94) saturate(0.92)", scale: 1.05, duration: 0.18 }, 0.30)
+        .to(q(".cards-copy"), { opacity: 1, y: 0, duration: 0.16 }, 0.36)
+        // Bug 2 fix: Word-by-word reveal with wider stagger
+        .fromTo(q(".cards-split-word"),
+          { opacity: 0, y: 12 },
+          {
+            opacity: 1,
+            y: 0,
+            rotateX: 0,
+            stagger: 0.03,
+            duration: 0.18,
+            ease: "none",
+          }, 0.37)
+        .to(q(".card"), { opacity: 1, y: 0, rotateX: 0, scale: 1, stagger: 0.025, duration: 0.18 }, 0.40)
+        // Bug 3 fix: Card spec labels float up
+        .fromTo(q(".card-spec-float"),
+          { y: 24, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            stagger: 0.04,
+            duration: 0.12,
+            ease: "power3.out",
+          }, 0.44)
         .to(q(".cta-lbl, .cta-body"), { opacity: 1, y: 0, stagger: 0.02, duration: 0.08 }, 0.66)
         .to(q(".cta-chip"), { opacity: 1, y: 0, stagger: 0.015, duration: 0.08 }, 0.7)
-        .to(q(".enter-btn"), { opacity: 1, y: 0, duration: 0.1 }, 0.73)
+        .to(q(".enter-btn, .enter-magnetic"), { opacity: 1, y: 0, duration: 0.1 }, 0.73)
         .to(q(".lab-hdr"), { opacity: 1, y: 0, duration: 0.1 }, 0.84)
         .to(q(".lab-wrap"), { opacity: 1, y: 0, duration: 0.1 }, 0.88);
 

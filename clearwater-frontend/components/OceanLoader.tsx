@@ -163,6 +163,40 @@ export default function OceanLoader() {
           opacity: 0,
           duration: 0.6,
           ease: "power2.out",
+          onComplete: () => {
+            // Bug 1 fix: Force-reveal surface content the instant the loader dies
+            gsap.to([
+              '.surface-cover',
+              '.surface-kicker',
+              '.surface-copy',
+              '.surface-meta div',
+            ], {
+              opacity: 1,
+              y: 0,
+              duration: 1.2,
+              ease: 'power3.out',
+              stagger: 0.12,
+              clearProps: 'transform', // Let scroll timeline take over after
+            });
+
+            // Reveal the split characters with a staggered typing effect
+            gsap.to('.split-char', {
+              opacity: 1,
+              y: 0,
+              rotateX: 0,
+              duration: 0.8,
+              ease: 'power3.out',
+              stagger: 0.025,
+              clearProps: 'transform',
+            });
+
+            // Ensure background plates are visible
+            gsap.to('[data-depth="background"]', {
+              opacity: 1,
+              filter: 'none',
+              duration: 0.6,
+            });
+          },
         }, "<");
     }, root);
 
