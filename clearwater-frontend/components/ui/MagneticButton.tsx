@@ -1,59 +1,171 @@
 'use client';
 
-import React, { useRef, useEffect } from 'react';
-import gsap from 'gsap';
+import Link from 'next/link';
+import {
+  type ButtonHTMLAttributes,
+  type MouseEventHandler,
+  type Ref,
+  type ReactNode,
+  useEffect,
+  useEffectEvent,
+  useRef,
+} from 'react';
+import { gsap } from '../../lib/gsap';
+import { useReducedMotion } from '../../lib/useReducedMotion';
+
+type Variant = 'primary' | 'secondary' | 'ghost';
+type Size = 'sm' | 'md';
+
+type SharedProps = {
+  children: ReactNode;
+  className?: string;
+  label?: string;
+  labelStrength?: number;
+  size?: Size;
+  strength?: number;
+  variant?: Variant;
+};
+
+type LinkProps = SharedProps & {
+  href: string;
+  onClick?: MouseEventHandler<HTMLAnchorElement>;
+  type?: never;
+};
+
+type ActionProps = SharedProps &
+  Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> & {
+    href?: never;
+  };
+
+type MagneticButtonProps = LinkProps | ActionProps;
+
+function joinClasses(...values: Array<string | undefined | false>) {
+  return values.filter(Boolean).join(' ');
+}
 
 export default function MagneticButton({
   children,
-  strength = 0.4,
+  className,
+  href,
+  label,
   labelStrength = 0.2,
-  onClick
-}: {
-  children: React.ReactNode;
-  strength?: number;
-  labelStrength?: number;
-  onClick?: () => void;
-}) {
-  const zoneRef = useRef<HTMLDivElement>(null);
-  const btnRef = useRef<HTMLDivElement>(null);
-  const labelRef = useRef<HTMLDivElement>(null);
+  size = 'md',
+  strength = 0.38,
+  variant = 'primary',
+  ...rest
+}: MagneticButtonProps) {
+  const reducedMotion = useReducedMotion();
+  const zoneRef = useRef<HTMLSpanElement>(null);
+  const actionRef = useRef<HTMLElement>(null);
+  const labelRef = useRef<HTMLSpanElement>(null);
+
+  const handlePointerMove = useEffectEvent((event: PointerEvent) => {
+    if (reducedMotion) {
+      return;
+    }
+
+    const zone = zoneRef.current;
+    const action = actionRef.current;
+    const labelNode = labelRef.current;
+
+    if (!zone || !action || !labelNode) {
+      return;
+    }
+
+    const rect = zone.getBoundingClientRect();
+    const x = gsap.utils.mapRange(rect.left, rect.right, -rect.width / 2, rect.width / 2, event.clientX);
+    const y = gsap.utils.mapRange(rect.top, rect.bottom, -rect.height / 2, rect.height / 2, event.clientY);
+
+    gsap.to(action, {
+      x: x * strength,
+      y: y * strength,
+      duration: 0.28,
+      ease: 'power3.out',
+      overwrite: 'auto',
+    });
+
+    gsap.to(labelNode, {
+      x: x * labelStrength,
+      y: y * labelStrength,
+      duration: 0.28,
+      ease: 'power3.out',
+      overwrite: 'auto',
+    });
+  });
+
+  const resetPosition = useEffectEvent(() => {
+    const action = actionRef.current;
+    const labelNode = labelRef.current;
+
+    if (!action || !labelNode) {
+      return;
+    }
+
+    gsap.to([action, labelNode], {
+      x: 0,
+      y: 0,
+      duration: 0.6,
+      ease: 'elastic.out(1, 0.45)',
+      overwrite: 'auto',
+    });
+  });
 
   useEffect(() => {
     const zone = zoneRef.current;
-    const btn = btnRef.current;
-    const label = labelRef.current;
 
-    if (!zone || !btn || !label) return;
+    if (!zone || reducedMotion) {
+      return;
+    }
 
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = zone.getBoundingClientRect();
-      const x = gsap.utils.mapRange(rect.left, rect.right, -rect.width / 2, rect.width / 2, e.clientX);
-      const y = gsap.utils.mapRange(rect.top, rect.bottom, -rect.height / 2, rect.height / 2, e.clientY);
-
-      gsap.to(btn, { x: x * strength, y: y * strength, duration: 0.4, ease: 'power2.out', overwrite: 'auto' });
-      gsap.to(label, { x: x * labelStrength, y: y * labelStrength, duration: 0.4, ease: 'power2.out', overwrite: 'auto' });
-    };
-
-    const handleMouseLeave = () => {
-      gsap.to([btn, label], { x: 0, y: 0, duration: 0.7, ease: 'elastic.out(1, 0.4)', overwrite: 'auto' });
-    };
-
-    zone.addEventListener('mousemove', handleMouseMove);
-    zone.addEventListener('mouseleave', handleMouseLeave);
+    zone.addEventListener('pointermove', handlePointerMove);
+    zone.addEventListener('pointerleave', resetPosition);
 
     return () => {
-      zone.removeEventListener('mousemove', handleMouseMove);
-      zone.removeEventListener('mouseleave', handleMouseLeave);
+      zone.removeEventListener('pointermove', handlePointerMove);
+      zone.removeEventListener('pointerleave', resetPosition);
     };
-  }, [strength, labelStrength]);
+  }, [reducedMotion]);
+
+  const classes = joinClasses(
+    'magnetic-link',
+    `magnetic-link--${variant}`,
+    `magnetic-link--${size}`,
+    className,
+  );
+
+  if (href) {
+    const { onClick } = rest as LinkProps;
+
+    return (
+      <span className="magnetic-zone" ref={zoneRef}>
+        <Link
+          href={href}
+          className={classes}
+          onClick={onClick}
+          ref={actionRef as Ref<HTMLAnchorElement>}
+        >
+          <span className="magnetic-label" ref={labelRef} aria-label={label}>
+            {children}
+          </span>
+        </Link>
+      </span>
+    );
+  }
+
+  const buttonProps = rest as ActionProps;
 
   return (
-    <div ref={zoneRef} className="relative inline-flex p-12 cursor-pointer touch-none" onClick={onClick}>
-      <div ref={btnRef} className="relative z-10 flex items-center justify-center rounded-full border border-white/20 px-8 py-4 transition-colors hover:bg-white/5">
-        <div ref={labelRef} className="relative z-20 pointer-events-none">
+    <span className="magnetic-zone" ref={zoneRef}>
+      <button
+        {...buttonProps}
+        className={classes}
+        ref={actionRef as Ref<HTMLButtonElement>}
+        type={buttonProps.type ?? 'button'}
+      >
+        <span className="magnetic-label" ref={labelRef} aria-label={label}>
           {children}
-        </div>
-      </div>
-    </div>
+        </span>
+      </button>
+    </span>
   );
 }
