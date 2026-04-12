@@ -39,7 +39,10 @@ export default function Nav() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 z-50 flex w-full items-center justify-between border-b border-white/5 bg-black/50 px-6 py-4 backdrop-blur-md md:px-12">
+    <nav
+      id="global-nav"
+      className="fixed top-0 left-0 z-50 flex w-full items-center justify-between border-b border-white/5 bg-black/50 px-6 py-4 backdrop-blur-md md:px-12"
+    >
       <div className="pointer-events-auto flex flex-col">
         <span className="text-lg font-bold tracking-wide text-white">Clearwater</span>
         <span className="text-[10px] uppercase tracking-[0.3em] text-slate-500">Underwater Vision</span>

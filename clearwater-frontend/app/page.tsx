@@ -3,16 +3,10 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import TeamConstellation from '../components/TeamConstellation';
 import MagneticButton from '../components/ui/MagneticButton';
 
 gsap.registerPlugin(ScrollTrigger);
-
-const teamMembers = [
-  'Atharv Jandal',
-  'Advitya Sharma',
-  'Darsh Dhawan',
-  'Divij Singh Soodan',
-];
 
 const storyPrompts = [
   'Restore coral mural',
@@ -43,6 +37,19 @@ export default function Home() {
         });
       });
 
+      const nav = document.getElementById('global-nav');
+
+      if (nav) {
+        gsap.from(Array.from(nav.children), {
+          y: -20,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: 'power3.out',
+          delay: 0.5,
+        });
+      }
+
       gsap.to('.math-svg', {
         rotation: 360,
         transformOrigin: 'center center',
@@ -61,23 +68,6 @@ export default function Home() {
           stagger: 0.2,
           delay: 1.2,
           ease: 'power3.out',
-        },
-      );
-
-      gsap.fromTo(
-        '.team-member',
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: '#team',
-            start: 'top 75%',
-            toggleActions: 'play none none reverse',
-          },
         },
       );
 
@@ -172,20 +162,7 @@ export default function Home() {
         </p>
       </section>
 
-      <section
-        id="team"
-        className="relative z-10 flex min-h-[50vh] flex-col items-center justify-center border-t border-white/5 bg-[#030712] px-6 py-24 md:px-10"
-      >
-        <p className="mb-12 text-xs uppercase tracking-[0.3em] text-[#00E5FF]">The Architects</p>
-        <div className="grid grid-cols-2 gap-12 text-center md:grid-cols-4">
-          {teamMembers.map((name) => (
-            <div key={name} className="team-member flex flex-col gap-2">
-              <span className="font-serif text-2xl text-white">{name}</span>
-              <span className="text-xs uppercase tracking-widest text-slate-500">Vision Engineer</span>
-            </div>
-          ))}
-        </div>
-      </section>
+      <TeamConstellation />
 
       <section
         id="lab"
