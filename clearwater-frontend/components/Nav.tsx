@@ -20,8 +20,8 @@ export default function Nav() {
         </nav>
 
         <div className="site-nav__actions">
-          <MagneticButton href="/integration" size="sm" variant="secondary">
-            Backend Plan
+          <MagneticButton href="/lab" size="sm" variant="secondary">
+            Enter Lab
           </MagneticButton>
         </div>
       </div>

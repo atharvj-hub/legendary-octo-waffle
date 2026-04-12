@@ -21,320 +21,306 @@ export type DetailPage = {
   sections: DetailSection[];
 };
 
+export type FeatureCallout = {
+  label: string;
+  detail: string;
+};
+
+export const heroSignals: FeatureCallout[] = [
+  {
+    label: 'Absorption',
+    detail: 'Water strips red wavelengths first, pushing underwater scenes toward blue and green casts.',
+  },
+  {
+    label: 'Scattering',
+    detail: 'Suspended particles diffuse incoming light into haze, flattening contrast and erasing fine edges.',
+  },
+  {
+    label: 'Low light',
+    detail: 'Exponential attenuation at depth darkens the frame long before human or model analysis can begin.',
+  },
+];
+
 export const homeStats: SiteStat[] = [
   {
-    value: "2 stages",
-    label: "Core pipeline",
-    detail: "Enhancement restores the frame for display while detection stays on the raw source.",
+    value: '7-Stage Pipeline',
+    label: 'Physics-guided restoration',
+    detail: 'From LAB chrominance correction to Guided Filter dehazing, every pixel is physically modeled.',
   },
   {
-    value: "7 passes",
-    label: "Enhancement depth",
-    detail: "Color correction, local contrast, dehazing, sharpening, denoising, and saturation recovery.",
+    value: '15-Class Detection',
+    label: 'Marine species recovery',
+    detail: 'Two-pass tiled YOLO inference recovers small marine species that standard models miss.',
   },
   {
-    value: "15 classes",
-    label: "Detection scope",
-    detail: "Custom YOLO species labels with post-processing built for underwater false positives.",
-  },
-  {
-    value: "Late MVP",
-    label: "Current maturity",
-    detail: "Strong CV logic, but still missing tests, API endpoints, and production-grade observability.",
+    value: 'Neural Fusion',
+    label: 'Adaptive arbitration',
+    detail: 'A dynamic SS-UIE network arbitrates between classical physics and deep learning recovery.',
   },
 ];
 
 export const pipelineSteps = [
   {
-    step: "01",
-    title: "Input",
-    body: "Raw underwater imagery enters untouched so the pipeline can preserve scientific fidelity.",
+    step: '01',
+    title: 'Raw Intake',
+    body: 'Each run begins with the untouched underwater frame so the original signal remains scientifically faithful.',
   },
   {
-    step: "02",
-    title: "Enhancement",
-    body: "The frame is restored through a seven-stage stack with an optional neural enhancement slot.",
+    step: '02',
+    title: 'Restoration',
+    body: 'A seven-stage enhancement engine rebuilds color, contrast, and detail lost to the water column.',
   },
   {
-    step: "03",
-    title: "Detection",
-    body: "YOLO runs on the original image using full-frame and tiled passes to recover small objects.",
+    step: '03',
+    title: 'Detection',
+    body: 'Marine species are localized on the raw image through full-frame and tiled inference passes.',
   },
   {
-    step: "04",
-    title: "Output",
-    body: "The system returns a comparison image, detections, and object-level metrics for review.",
+    step: '04',
+    title: 'Review',
+    body: 'The system returns a side-by-side comparison image and per-object metrics for confident interpretation.',
   },
 ];
 
-export const frontendPhases = [
+export const labFlow = [
   {
-    title: "Now",
-    body: "Clean PRD-driven navigation, stable interactions, and a route structure we can keep when the backend arrives.",
+    title: 'Frame Intake',
+    body: 'Raw underwater imagery enters the lab untouched so detection can preserve the original optical signal.',
   },
   {
-    title: "Next",
-    body: "Wire upload, processing, result, and error states to a backend job API instead of local demo state.",
+    title: 'Enhancement Pass',
+    body: 'LAB correction, CLAHE, neural fusion, guided dehazing, sharpening, denoising, and saturation recovery rebuild the scene.',
   },
   {
-    title: "Later",
-    body: "Refine motion, typography, and branded visuals after the data contract and screen flow are locked down.",
+    title: 'Detection Report',
+    body: 'Two-pass tiled YOLO inference, box validity filtering, and cross-class NMS produce the final marine species report.',
+  },
+];
+
+export const labOutputs = [
+  {
+    title: 'Comparison Image',
+    body: 'Every run is designed to resolve into a side-by-side raw and enhanced panel with detection overlays.',
+  },
+  {
+    title: 'Species Metrics',
+    body: 'Each object carries confidence, area, diameter, and circularity-style geometry so review remains quantitative.',
+  },
+  {
+    title: 'Model Path',
+    body: 'The restoration path can surface whether the frame was handled by SS-UIE, WaterNet, or the classical fallback stack.',
   },
 ];
 
 export const detailPages: DetailPage[] = [
   {
-    slug: "architecture",
-    navLabel: "Architecture",
-    eyebrow: "System map",
-    title: "The product is a two-stage underwater vision pipeline.",
+    slug: 'architecture',
+    navLabel: 'Architecture',
+    eyebrow: 'System architecture',
+    title: 'A two-stage computer vision system built for degraded underwater imagery.',
     intro:
-      "The PRD describes a research-grade computer vision stack with a clear split between image enhancement and marine object detection.",
+      'Clearwater separates visual restoration from species detection so the image can be rebuilt for human review while the detector stays anchored to the untouched raw frame.',
     summary:
-      "This page captures how the current Python project is structured and what the frontend should assume when we wire it to a backend service.",
+      'Stage 1 reconstructs clarity and color for display. Stage 2 detects marine life on the original signal and returns a comparison image plus structured metrics.',
     stats: [
       {
-        value: "738 LOC",
-        label: "Source footprint",
-        detail: "Most of the logic lives in main.py, enhance.py, and ssuie_arch.py.",
+        value: '2 stages',
+        label: 'Restoration + detection',
+        detail: 'Enhancement is display-first, detection is raw-signal-first.',
       },
       {
-        value: "3 models",
-        label: "External weights",
-        detail: "YOLO is required while SS-UIE and WaterNet are optional enhancement accelerators.",
+        value: '7 passes',
+        label: 'Enhancement depth',
+        detail: 'The restoration engine chains seven classical and neural-aware recovery passes.',
       },
       {
-        value: "6 images",
-        label: "Test inputs",
-        detail: "The sample repo currently ships with a small folder of underwater examples.",
+        value: '15 classes',
+        label: 'Species model',
+        detail: 'The detector is trained on fifteen underwater species classes.',
       },
       {
-        value: "9 commits",
-        label: "Build window",
-        detail: "The report shows a short academic development burst over roughly five active days.",
+        value: 'Compare output',
+        label: 'Review surface',
+        detail: 'Each run is framed as a side-by-side output image with object annotations.',
       },
     ],
     sections: [
       {
-        title: "High-level system",
+        title: 'Stage 1: Restoration for visual recovery',
         body:
-          "The pipeline starts from raw underwater imagery, runs an enhancement branch for visual recovery, and keeps detection on the original image to avoid artifact-driven boxes.",
+          'The first stage rebuilds underwater frames for human interpretation, compensating for color cast, haze, and depth-driven darkness before the image is presented for review.',
         bullets: [
-          "Stage 1 enhancement produces a restored frame for human review and comparison output.",
-          "Stage 2 detection performs species localization on the raw frame with a custom YOLO model.",
-          "Final output combines side-by-side imagery with structured terminal metrics for each detection.",
+          'LAB chrominance correction neutralizes green and blue cast drift.',
+          'CLAHE, adaptive gamma, guided dehazing, sharpening, and denoising restore usable local contrast.',
+          'The final enhanced frame is written to the comparison surface rather than used for detection.',
         ],
       },
       {
-        title: "Code structure reality",
+        title: 'Stage 2: Detection on the untouched signal',
         body:
-          "The PRD shows a focused research repository rather than a productized service, so the frontend should expect backend adaptation work before any real integration.",
+          'Clearwater keeps detection on the raw image to avoid enhancement artifacts biasing the location or class of the predicted boxes.',
         bullets: [
-          "main.py orchestrates detection, visualization, and metric printing.",
-          "enhance.py owns the seven-stage restoration path plus neural model loading.",
-          "ssuie_arch.py reconstructs the SS-UIE network and config.py is currently dead code.",
+          'Full-frame YOLO inference captures large and medium objects across the scene.',
+          'A second tiled pass restores recall for small marine species lost by standard resizing.',
+          'Per-class and cross-class NMS resolve duplicate and generic-versus-specific detections.',
         ],
       },
       {
-        title: "Product maturity",
+        title: 'The review artifact',
         body:
-          "The report rates the project at late MVP or early beta. The algorithms are strong; the infrastructure is not.",
+          'The final product surface is not just an image. It is a structured interpretive layer for both visual inspection and numeric analysis.',
         bullets: [
-          "Testing, CI, API design, logging, and containerization are still missing.",
-          "The source reportedly contains unresolved merge markers and unused configuration paths.",
-          "Graceful degradation is already a strength because enhancement can fall back to classical methods.",
+          'The output image presents raw and enhanced panels side by side.',
+          'Detection overlays can be compared visually against both views.',
+          'Each object is paired with confidence and geometry metrics for downstream review.',
         ],
       },
     ],
   },
   {
-    slug: "enhancement",
-    navLabel: "Enhancement",
-    eyebrow: "Stage 1",
-    title: "Enhancement is a seven-stage restoration pass with adaptive tuning.",
+    slug: 'enhancement',
+    navLabel: 'Enhancement',
+    eyebrow: 'Enhancement engine',
+    title: 'Seven restoration stages counter the three physics failures of underwater imaging.',
     intro:
-      "The PRD frames enhancement as a display-first recovery pipeline that compensates for underwater absorption, scattering, and low illumination.",
+      'Underwater scenes degrade through wavelength absorption, suspended-particle scattering, and severe illumination loss. Clearwater treats each of those failures as an explicit restoration target.',
     summary:
-      "This page is the source of truth for how we describe restoration in the UI before the model output is available live.",
+      'The enhancement engine combines cast-aware classical processing with optional neural fusion so the final frame feels recovered rather than cosmetically filtered.',
     stats: [
       {
-        value: "7 stages",
-        label: "Sequential steps",
-        detail: "The pipeline chains color correction, contrast, dehazing, sharpening, denoising, and saturation recovery.",
+        value: '3 degradations',
+        label: 'Physics targets',
+        detail: 'Absorption, scattering, and low illumination define the restoration problem.',
       },
       {
-        value: "60/40",
-        label: "Neural fusion",
-        detail: "When a neural model is available, the restored output is blended with the LAB-corrected base.",
+        value: '7 stages',
+        label: 'Recovery sequence',
+        detail: 'Each stage restores a distinct failure mode before the final frame is produced.',
       },
       {
-        value: "3 scales",
-        label: "MSR fallback",
-        detail: "Retinex fallback uses multi-scale log-domain illumination recovery when neural models are absent.",
+        value: '60/40',
+        label: 'Neural blend',
+        detail: 'When available, neural output is fused back into the LAB-corrected base.',
       },
       {
-        value: "25%",
-        label: "Safety floor",
-        detail: "If the result becomes too dark, the original frame is returned instead.",
+        value: '25% guard',
+        label: 'Safety threshold',
+        detail: 'If the restored frame drops too far below the source brightness, the original is preserved.',
       },
     ],
     sections: [
       {
-        title: "Adaptive cast detection",
+        title: 'Absorption and color cast',
         body:
-          "The pipeline estimates blue and green cast intensity relative to the red channel and uses that value to tune correction strength throughout the stack.",
+          'Water attenuates red wavelengths first, then progressively collapses the warm end of the spectrum. Clearwater measures cast relative to the red channel and uses that signal to drive correction strength.',
         bullets: [
-          "Red is the reference because it attenuates first underwater.",
-          "Higher cast increases LAB chroma correction and saturation recovery strength.",
-          "This keeps the pipeline aggressive on damaged frames without overcorrecting clearer ones.",
+          'LAB chrominance correction shifts the a* and b* channels back toward neutral.',
+          'Cast strength scales the amount of correction so green-heavy and blue-heavy scenes are treated differently.',
+          'Final saturation restore returns chroma after the frame regains structural clarity.',
         ],
       },
       {
-        title: "Seven enhancement stages",
+        title: 'Scattering and haze',
         body:
-          "Enhancement progresses from color normalization into local contrast and then into cleanup passes that restore a usable frame.",
+          'Suspended particles scatter light into a veil that erases local edges and compresses contrast. Clearwater addresses that by restoring local separation before polishing detail.',
         bullets: [
-          "LAB chrominance correction neutralizes green and blue drift.",
-          "CLAHE plus adaptive gamma lifts dark scenes without flattening bright scenes.",
-          "Guided dehazing, unsharp masking, and bilateral denoising recover detail while controlling artifacts.",
+          'CLAHE on the luminance channel reopens local contrast without blowing out highlights.',
+          'Guided Filter dehazing removes haze while respecting image boundaries.',
+          'Unsharp masking and bilateral denoising recover edge presence while suppressing artifact growth.',
         ],
       },
       {
-        title: "Neural slot and fallback logic",
+        title: 'Low illumination and tonal recovery',
         body:
-          "The PRD makes clear that neural enhancement is optional. The classical path is not a failure mode; it is an explicit fallback.",
+          'Depth-driven darkness is treated as more than exposure loss. The pipeline uses adaptive gamma and recovery blending so dim scenes regain readability without looking synthetic.',
         bullets: [
-          "SS-UIE or WaterNet can supply a neural candidate that blends back into the classical base image.",
-          "Multi-Scale Retinex fills the same slot when deep weights are unavailable.",
-          "A final brightness guard returns the original if the restoration pipeline materially harms the frame.",
+          'Adaptive gamma brightens dark frames more aggressively than bright ones.',
+          'Multi-Scale Retinex provides a classical fallback when neural enhancement is unavailable.',
+          'The final safety guard prevents over-processing from returning a frame darker than the source.',
+        ],
+      },
+      {
+        title: 'Neural fusion in the recovery stack',
+        body:
+          'When SS-UIE or WaterNet is available, Clearwater does not simply replace the classical frame. It fuses neural recovery with the corrected base so the output remains grounded in physically plausible structure.',
+        bullets: [
+          'SS-UIE and WaterNet occupy the neural slot in the restoration sequence.',
+          'The neural result is blended into the LAB-corrected base rather than trusted blindly.',
+          'If no neural model is present, the classical stack continues through the same review surface.',
         ],
       },
     ],
   },
   {
-    slug: "detection",
-    navLabel: "Detection",
-    eyebrow: "Stage 2",
-    title: "Detection uses a two-pass YOLO strategy tuned for underwater scenes.",
+    slug: 'detection',
+    navLabel: 'Detection',
+    eyebrow: 'Detection engine',
+    title: 'Two-pass tiled YOLO inference preserves small-species recall in hostile underwater scenes.',
     intro:
-      "The detector is designed to recover both full-frame objects and small species that disappear when a large image is compressed to a single 640px inference pass.",
+      'A single resized inference pass is not enough for dense underwater imagery. Clearwater pairs full-frame context with overlapping tile scans so smaller marine species survive the trip through the detector.',
     summary:
-      "This is the detection behavior the frontend should explain and later surface in a result panel.",
+      'The detector is built around tiled recovery, geometric box validation, and cross-class suppression that resolves the classic double-box artifact.',
     stats: [
       {
-        value: "640 px",
-        label: "Base inference size",
-        detail: "The detector uses a standard YOLO image size for both full-frame and tiled passes.",
+        value: '640 px',
+        label: 'Inference size',
+        detail: 'The full frame and every tile are normalized to a 640 pixel YOLO input.',
       },
       {
-        value: "20%",
-        label: "Tile overlap",
-        detail: "Overlap reduces missed detections at tile edges before post-processing collapse.",
+        value: '20% overlap',
+        label: 'Tile stride',
+        detail: 'Overlapping tiles prevent edge loss and recover objects split across tile boundaries.',
       },
       {
-        value: "0.15",
-        label: "Confidence floor",
-        detail: "The configuration favors recall and cleans noise later with geometry filters and NMS.",
+        value: '0.15 conf',
+        label: 'Recall bias',
+        detail: 'The detector intentionally accepts low-confidence candidates before geometric cleanup.',
       },
       {
-        value: "2x NMS",
-        label: "Post-processing",
-        detail: "Per-class and cross-class suppression remove both duplicates and generic-vs-specific conflicts.",
+        value: '2x NMS',
+        label: 'Artifact control',
+        detail: 'Per-class and cross-class suppression collapse duplicates and class conflicts.',
       },
     ],
     sections: [
       {
-        title: "Two-pass inference",
+        title: 'The two-pass tiled strategy',
         body:
-          "The detector first sees the whole frame, then re-runs inference over overlapping tiles to recover smaller fish and species details.",
+          'Clearwater first reads the entire image for scene context, then sweeps overlapping tiles across the frame to recover smaller targets that disappear after standard resizing.',
         bullets: [
-          "Full-frame inference handles larger objects and overall scene context.",
-          "Tiled inference improves recall when small objects would shrink below the detector threshold.",
-          "Tile coordinates are remapped back to the original frame before post-processing.",
+          'Full-frame inference is responsible for large and medium marine objects.',
+          'Tiled inference recovers fish that would otherwise compress below the detector threshold.',
+          'Tile coordinates are remapped to the original image so the final boxes stay frame-accurate.',
         ],
       },
       {
-        title: "Validity filtering and NMS",
+        title: 'Validity filtering before suppression',
         body:
-          "The PRD uses geometry rules before suppression so obvious nonsense boxes are discarded before overlap resolution begins.",
+          'Not every low-confidence box deserves a second life. Clearwater rejects geometrically implausible candidates before suppression begins.',
         bullets: [
-          "Boxes must pass minimum area, maximum frame fraction, and maximum aspect-ratio checks.",
-          "Per-class NMS removes duplicate boxes for the same label across overlapping tiles.",
-          "Cross-class NMS lets specific species labels beat generic fish labels when both fire on the same object.",
+          'Boxes smaller than the minimum area threshold are discarded as noise.',
+          'Detections that occupy too much of the frame are rejected as scene-level false positives.',
+          'Extreme aspect ratios are removed before they can contaminate final species output.',
         ],
       },
       {
-        title: "Output format",
+        title: 'Cross-class NMS and the double-box artifact',
         body:
-          "Detection results already have a clear presentation model even though the current project only prints them in the terminal.",
+          'Underwater detectors often fire both a generic fish label and a species-specific label on the same animal. Clearwater resolves that conflict explicitly instead of trusting score order alone.',
         bullets: [
-          "Each object carries confidence, area, diameter, and circularity-style shape measurements.",
-          "The compare image overlays detections on both the raw and enhanced views.",
-          "Because detection stays on the raw frame, UI copy should never imply boxes are generated from the restored image.",
-        ],
-      },
-    ],
-  },
-  {
-    slug: "integration",
-    navLabel: "Integration",
-    eyebrow: "Next phase",
-    title: "Frontend integration should wrap the current CLI pipeline behind a stable job API.",
-    intro:
-      "The PRD does not define a web backend, so this page turns the report into a practical frontend contract for the next phase.",
-    summary:
-      "These are the interfaces and states we should build against before investing in heavier visual polish.",
-    stats: [
-      {
-        value: "5 states",
-        label: "UI flow",
-        detail: "Idle, uploading, queued, processing, and result should be first-class states in the frontend.",
-      },
-      {
-        value: "4 endpoints",
-        label: "API surface",
-        detail: "A minimal backend can be framed around job creation, status, result fetch, and system health.",
-      },
-      {
-        value: "1 source",
-        label: "Truth model",
-        detail: "The frontend should render from structured pipeline metadata rather than ad-hoc scene copy.",
-      },
-      {
-        value: "3 blockers",
-        label: "Backend prep",
-        detail: "API layer, logging, and tests need attention before production wiring is safe.",
-      },
-    ],
-    sections: [
-      {
-        title: "Recommended API contract",
-        body:
-          "The current Python stack should sit behind a job-oriented interface so the frontend can remain asynchronous and resilient.",
-        bullets: [
-          "POST /api/v1/runs should accept an image upload and return a run id plus initial status.",
-          "GET /api/v1/runs/:id should return stage, progress, model availability, and any processing warnings.",
-          "GET /api/v1/runs/:id/result should return enhanced image URLs, compare image URLs, detections, and metrics.",
+          'Per-class NMS collapses duplicates generated by overlapping tiles.',
+          'Cross-class NMS compares generic and specific labels over the same object footprint.',
+          'When a specific species label overlaps a generic fish box, the specific label wins and the double-box artifact disappears.',
         ],
       },
       {
-        title: "Frontend states to preserve",
+        title: 'Structured review metrics',
         body:
-          "The UI should be explicit about what is happening rather than pretending the full system is already live.",
+          'Detection output is designed to be inspected, not just rendered. Each object ships with interpretable numbers that support review and downstream filtering.',
         bullets: [
-          "Show whether neural enhancement is available or whether classical fallback was used.",
-          "Keep raw-image detection and restored-image display as separate concepts in the result view.",
-          "Expose failure and degraded-mode states so backend issues do not silently collapse into empty screens.",
-        ],
-      },
-      {
-        title: "Backend cleanup before wiring",
-        body:
-          "The report identifies a few concrete issues that should be addressed before the service boundary is formalized.",
-        bullets: [
-          "Resolve source merge markers and remove dead configuration paths.",
-          "Add structured logging plus at least a smoke-test layer around enhancement and NMS behavior.",
-          "Wrap the current CLI pipeline in a backend service without changing the underlying PRD semantics.",
+          'Confidence scores quantify detector certainty for every predicted object.',
+          'Area and diameter provide an immediate read on object scale inside the frame.',
+          'Circularity-style geometry helps distinguish compact objects from elongated false positives.',
         ],
       },
     ],

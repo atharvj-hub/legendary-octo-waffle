@@ -1,9 +1,9 @@
-import Link from 'next/link';
 import MagneticButton from '../components/ui/MagneticButton';
 import {
   detailPages,
-  frontendPhases,
+  heroSignals,
   homeStats,
+  labOutputs,
   pipelineSteps,
 } from '../lib/site-content';
 
@@ -12,41 +12,32 @@ export default function Home() {
     <main className="page-home">
       <section className="hero-block frame">
         <div className="hero-copy surface-panel">
-          <p className="eyebrow">PRD aligned interface</p>
-          <h1 className="hero-title">
-            A clean frontend for underwater restoration, enhancement, and detection.
-          </h1>
+          <p className="eyebrow">Underwater image reconstruction</p>
+          <h1 className="hero-title">Reveal what the water concealed.</h1>
           <p className="hero-body">
-            The current app now reflects the actual product requirements instead of a fragile animation
-            prototype. The structure below matches the PRD, keeps every key screen reachable, and sets
-            up the next phase of backend integration.
+            A research-grade computer vision system. Clearwater combines Dark Channel Prior physics with a
+            custom U-Net architecture to restore clarity, color, and detail to degraded underwater imagery.
           </p>
           <div className="hero-actions">
             <MagneticButton href="/architecture">Open Architecture</MagneticButton>
-            <MagneticButton href="/integration" variant="secondary">
-              Review Backend Plan
+            <MagneticButton href="/lab" variant="secondary">
+              Enter Lab
             </MagneticButton>
           </div>
         </div>
 
         <div className="hero-aside surface-panel">
           <div className="hero-aside__header">
-            <p className="eyebrow">Current build reality</p>
-            <h2 className="surface-title">What this UI now optimizes for</h2>
+            <p className="eyebrow">Underwater degradations</p>
+            <h2 className="surface-title">Three physical failures define the problem.</h2>
           </div>
           <div className="signal-list">
-            <article className="signal-card">
-              <span className="signal-card__label">Stable interactions</span>
-              <p>Loader races and invisible click traps are removed from the root experience.</p>
-            </article>
-            <article className="signal-card">
-              <span className="signal-card__label">Route-based detail</span>
-              <p>Architecture, enhancement, detection, and integration each live on dedicated pages.</p>
-            </article>
-            <article className="signal-card">
-              <span className="signal-card__label">Backend-ready content</span>
-              <p>The UI is driven by structured PRD data instead of one-off animated scene copy.</p>
-            </article>
+            {heroSignals.map((signal) => (
+              <article key={signal.label} className="signal-card">
+                <span className="signal-card__label">{signal.label}</span>
+                <p>{signal.detail}</p>
+              </article>
+            ))}
           </div>
         </div>
       </section>
@@ -54,7 +45,7 @@ export default function Home() {
       <section className="frame section-block">
         <div className="section-heading">
           <p className="eyebrow">Core facts</p>
-          <h2 className="section-title">The product story is now visible at a glance.</h2>
+          <h2 className="section-title">The recovery stack is designed for underwater physics, not cosmetic filtering.</h2>
         </div>
         <div className="stat-grid">
           {homeStats.map((stat) => (
@@ -70,10 +61,10 @@ export default function Home() {
       <section className="frame section-block">
         <div className="section-heading">
           <p className="eyebrow">Detailed pages</p>
-          <h2 className="section-title">Every major PRD topic has its own route.</h2>
+          <h2 className="section-title">Open the technical spec behind each core subsystem.</h2>
           <p className="section-copy">
-            These pages replace the old story scenes. They are simpler, clickable, and written around the
-            actual system instead of decorative motion.
+            Architecture, enhancement, and detection each have their own route so the science, not the
+            interface scaffolding, carries the narrative.
           </p>
         </div>
 
@@ -106,7 +97,7 @@ export default function Home() {
       <section className="frame section-block">
         <div className="section-heading">
           <p className="eyebrow">Pipeline snapshot</p>
-          <h2 className="section-title">The frontend now mirrors the real processing order.</h2>
+          <h2 className="section-title">Clearwater moves from raw signal to structured review in four steps.</h2>
         </div>
         <div className="pipeline-grid">
           {pipelineSteps.map((step) => (
@@ -121,27 +112,25 @@ export default function Home() {
 
       <section className="frame section-block section-block--last">
         <div className="section-heading">
-          <p className="eyebrow">Execution plan</p>
-          <h2 className="section-title">The architecture is staged so backend wiring is the next clean move.</h2>
+          <p className="eyebrow">Lab output</p>
+          <h2 className="section-title">The lab is where restored imagery and species evidence resolve into one surface.</h2>
         </div>
         <div className="phase-grid">
-          {frontendPhases.map((phase) => (
-            <article key={phase.title} className="phase-card surface-panel">
-              <h3>{phase.title}</h3>
-              <p>{phase.body}</p>
+          {labOutputs.map((output) => (
+            <article key={output.title} className="phase-card surface-panel">
+              <h3>{output.title}</h3>
+              <p>{output.body}</p>
             </article>
           ))}
         </div>
         <div className="section-actions">
+          <MagneticButton href="/lab">Enter Lab</MagneticButton>
           <MagneticButton href="/detection" variant="ghost">
             Detection details
           </MagneticButton>
           <MagneticButton href="/enhancement" variant="secondary">
             Enhancement details
           </MagneticButton>
-          <Link href="/integration" className="inline-link">
-            See the full integration route
-          </Link>
         </div>
       </section>
     </main>
