@@ -7,11 +7,12 @@ export default function NotFound() {
         <p className="eyebrow">Route missing</p>
         <h1 className="detail-title">That page is not part of the Clearwater information architecture.</h1>
         <p className="detail-intro">
-          Use the architecture, enhancement, detection, and lab routes to move through the system.
+          Use the architecture and subsystem pages for deep technical detail, or jump straight back into the
+          one-page funnel.
         </p>
         <div className="detail-actions">
           <MagneticButton href="/">Go Home</MagneticButton>
-          <MagneticButton href="/lab" variant="secondary">
+          <MagneticButton href="/#lab" variant="secondary">
             Enter Lab
           </MagneticButton>
         </div>

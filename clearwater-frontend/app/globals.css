@@ -25,6 +25,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 96px;
 }
 
 body {
@@ -65,6 +66,10 @@ body::after {
     linear-gradient(115deg, transparent 0%, rgba(110, 195, 255, 0.05) 46%, transparent 62%),
     radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.05), transparent 32%);
   animation: line-sweep 16s linear infinite;
+}
+
+section[id] {
+  scroll-margin-top: 96px;
 }
 
 a {
