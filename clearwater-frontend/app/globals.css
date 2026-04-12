@@ -632,7 +632,7 @@ select {
 
 @media (max-width: 760px) {
   :root {
-    --frame: min(100vw - 24px, 100vw - 24px);
+    --frame: calc(100vw - 24px);
   }
 
   .page-home,
