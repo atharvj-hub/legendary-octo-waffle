@@ -70,17 +70,16 @@ export default function HeroScene() {
 
       <div className="hero-left" data-depth="foreground">
         <p className="eyebrow">Project · 2026</p>
-        <h2 className="hero-h" ref={headingRef} data-breathe aria-label="The ocean holds secrets. We restore what was lost.">
-          <span className="hero-line"><SplitChars text={line1} offset={0} className="split-char" /></span>
-          <br />
-          <span className="hero-line">
-            <SplitChars text={line2} offset={line1.length} className="split-char" />
-            <em style={{ fontStyle: "italic", color: "var(--accent)" }}>
-              <SplitChars text={line2em} offset={line1.length + line2.length} className="split-char" />
-            </em>
-          </span>
-          <br />
-          <span className="hero-line"><SplitChars text={line3} offset={line1.length + line2.length + line2em.length} className="split-char" /></span>
+        <h2 className="hero-h" id="hH">
+          {/* We are manually forcing the spans so GSAP has targets */}
+          <span className="split-char inline-block opacity-0">The</span>&nbsp;
+          <span className="split-char inline-block opacity-0">ocean</span>&nbsp;
+          <span className="split-char inline-block opacity-0">holds</span><br/>
+          <span className="split-char inline-block opacity-0">secrets.</span>&nbsp;
+          <em className="split-char inline-block opacity-0 text-[#38bdf8]">We restore</em><br/>
+          <span className="split-char inline-block opacity-0">what</span>&nbsp;
+          <span className="split-char inline-block opacity-0">was</span>&nbsp;
+          <span className="split-char inline-block opacity-0">lost.</span>
         </h2>
         <p className="hero-body">A hybrid deep-learning system combining Dark Channel Prior physics modeling with a custom U-Net architecture to restore clarity, color, and detail from degraded underwater imagery.</p>
         <div className="hero-credits">

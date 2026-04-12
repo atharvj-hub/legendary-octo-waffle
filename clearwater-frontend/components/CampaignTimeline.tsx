@@ -47,7 +47,6 @@ export default function CampaignTimeline({ children }: CampaignTimelineProps) {
       const revealTargets = [
         ...q(".hero-left"),
         ...q(".hero-left .eyebrow"),
-        ...q(".hero-h"),
         ...q(".hero-body"),
         ...q(".hero-credits"),
         ...q(".hero-chip"),
@@ -94,6 +93,37 @@ export default function CampaignTimeline({ children }: CampaignTimelineProps) {
       gsap.to(q("[data-breathe]"), {
         y: 3, scale: 1.006, opacity: 0.98,
         duration: 3.4, repeat: -1, yoyo: true, ease: "sine.inOut",
+      });
+
+      // ── DEDICATED SCROLL TRIGGERS (outside master timeline) ──
+
+      // 1. The Character Stagger
+      gsap.to('.split-char', {
+        opacity: 1,
+        y: 0,
+        stagger: 0.04,
+        ease: 'power2.out',
+        duration: 0.8,
+        scrollTrigger: {
+          trigger: '#hH',
+          start: 'top 80%',
+          toggleActions: 'play none none reverse'
+        }
+      });
+
+      // 2. The Floating Specs
+      gsap.set('.floating-spec', { y: 40, opacity: 0 });
+      gsap.to('.floating-spec', {
+        y: 0,
+        opacity: 1,
+        stagger: 0.15,
+        ease: 'power3.out',
+        duration: 1,
+        scrollTrigger: {
+          trigger: '#hero-section',
+          start: 'top 60%',
+          toggleActions: 'play none none reverse'
+        }
       });
 
       // ── PHASE 4: HERO SECTION PINNING (150vh scroll-through) ──
@@ -148,13 +178,7 @@ export default function CampaignTimeline({ children }: CampaignTimelineProps) {
         // ── HERO REVEALS ──
         .to(q(".hero-left"), { opacity: 1, y: 0, duration: 0.08 }, 0.14)
         .to(q(".hero-left .eyebrow"), { opacity: 1, y: 0, duration: 0.05 }, 0.15)
-        .to(q(".hero-h"), { opacity: 1, y: 0, duration: 0.05 }, 0.16)
 
-        // Character-by-character reveal (Apple typing effect)
-        .fromTo(q(".split-char"),
-          { opacity: 0, y: 10 },
-          { opacity: 1, y: 0, rotateX: 0, stagger: 0.02, duration: 0.14, ease: "none" },
-          0.16)
 
         .to(q(".hero-body, .hero-credits, .hero-chip"), {
           opacity: 1, y: 0, stagger: 0.01, duration: 0.08,
@@ -162,11 +186,6 @@ export default function CampaignTimeline({ children }: CampaignTimelineProps) {
 
         .to(q(".hero-right"), { opacity: 1, y: 0, duration: 0.1 }, 0.16)
 
-        // Floating stats rise from below
-        .fromTo(q(".floating-spec"),
-          { y: 40, opacity: 0, scale: 0.92 },
-          { y: 0, opacity: 1, scale: 1, stagger: 0.05, duration: 0.14, ease: "power3.out" },
-          0.22)
 
         // ── CARDS REVEALS ──
         .to(q(".cards-copy"), { opacity: 1, y: 0, duration: 0.12 }, 0.36)
