@@ -591,6 +591,77 @@ select {
   pointer-events: none;
 }
 
+.story-prompts {
+  gap: 12px;
+  align-items: center;
+}
+
+.story-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background: rgba(7, 17, 26, 0.5);
+  color: rgba(226, 232, 240, 0.62);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  backdrop-filter: blur(12px);
+}
+
+.lab-beacon {
+  position: relative;
+  overflow: hidden;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #59d8ff 0%, #39e5c1 100%) !important;
+  color: #062733 !important;
+  box-shadow:
+    0 18px 38px rgba(7, 196, 182, 0.16),
+    0 0 34px rgba(0, 229, 255, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24) !important;
+}
+
+.lab-beacon::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, transparent 44%);
+  opacity: 0.42;
+}
+
+.lab-beacon .magnetic-label {
+  color: #0a2230;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+}
+
+.lab-beacon--nav {
+  min-width: 214px;
+  min-height: 54px !important;
+  padding: 0 28px !important;
+}
+
+.lab-beacon--hero {
+  min-width: clamp(240px, 30vw, 330px);
+  min-height: 64px !important;
+  padding: 0 34px !important;
+}
+
+.lab-beacon:hover,
+.lab-beacon:focus-visible {
+  box-shadow:
+    0 22px 42px rgba(7, 196, 182, 0.2),
+    0 0 42px rgba(0, 229, 255, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24) !important;
+}
+
 @keyframes panel-in {
   from {
     opacity: 0;

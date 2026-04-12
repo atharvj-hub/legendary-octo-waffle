@@ -14,6 +14,12 @@ const teamMembers = [
   'Divij Singh Soodan',
 ];
 
+const storyPrompts = [
+  'Restore coral mural',
+  'Trace a lost silhouette',
+  'Recover pressure faded blues',
+];
+
 export default function Home() {
   const containerRef = useRef<HTMLElement>(null);
 
@@ -57,6 +63,40 @@ export default function Home() {
           ease: 'power3.out',
         },
       );
+
+      gsap.fromTo(
+        '.team-member',
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: '#team',
+            start: 'top 75%',
+            toggleActions: 'play none none reverse',
+          },
+        },
+      );
+
+      gsap.fromTo(
+        '.lab-container',
+        { scale: 0.85, opacity: 0, borderRadius: '64px' },
+        {
+          scale: 1,
+          opacity: 1,
+          borderRadius: '24px',
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: '#lab',
+            start: 'top 90%',
+            end: 'top 30%',
+            scrub: 1.5,
+          },
+        },
+      );
     }, containerRef);
 
     return () => ctx.revert();
@@ -68,6 +108,14 @@ export default function Home() {
         id="story"
         className="relative flex h-screen flex-col items-center justify-center overflow-hidden px-6 text-center md:px-10"
       >
+        <div className="story-prompts pointer-events-none absolute top-24 left-1/2 z-10 hidden -translate-x-1/2 md:flex">
+          {storyPrompts.map((prompt) => (
+            <span key={prompt} className="story-chip">
+              {prompt}
+            </span>
+          ))}
+        </div>
+
         <svg
           className="math-svg pointer-events-none absolute inset-0 h-full w-full opacity-20"
           viewBox="0 0 100 100"
@@ -131,7 +179,7 @@ export default function Home() {
         <p className="mb-12 text-xs uppercase tracking-[0.3em] text-[#00E5FF]">The Architects</p>
         <div className="grid grid-cols-2 gap-12 text-center md:grid-cols-4">
           {teamMembers.map((name) => (
-            <div key={name} className="flex flex-col gap-2">
+            <div key={name} className="team-member flex flex-col gap-2">
               <span className="font-serif text-2xl text-white">{name}</span>
               <span className="text-xs uppercase tracking-widest text-slate-500">Vision Engineer</span>
             </div>
@@ -149,7 +197,7 @@ export default function Home() {
           Restoration Studio
         </h2>
 
-        <div className="relative z-10 w-full max-w-5xl rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl md:p-12">
+        <div className="lab-container relative z-10 w-full max-w-5xl rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl md:p-12">
           <div className="group mb-12 flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-white/20 transition-colors hover:border-[#00E5FF]/50">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-white/20 transition-colors group-hover:border-[#00E5FF] group-hover:text-[#00E5FF]">
               <svg
