@@ -1,8 +1,10 @@
 'use client';
 
+import './fish.scss';
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import BackgroundFish from '../components/BackgroundFish';
 import TeamConstellation from '../components/TeamConstellation';
 import MagneticButton from '../components/ui/MagneticButton';
 
@@ -93,7 +95,12 @@ export default function Home() {
   }, []);
 
   return (
-    <main ref={containerRef} className="bg-[#030712] text-white selection:bg-[#00E5FF] selection:text-black">
+    <main
+      ref={containerRef}
+      className="relative isolate bg-[#030712] text-white selection:bg-[#00E5FF] selection:text-black"
+    >
+      <BackgroundFish />
+
       <section
         id="story"
         className="relative flex h-screen flex-col items-center justify-center overflow-hidden px-6 text-center md:px-10"

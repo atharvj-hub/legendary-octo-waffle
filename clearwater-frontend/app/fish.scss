@@ -1,0 +1,268 @@
+.fish-wrapper {
+  --mask: linear-gradient(180deg, rgba(0, 0, 0, 1), transparent);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  perspective: 100rem;
+  perspective-origin: center center;
+  transform-style: preserve-3d;
+  pointer-events: none;
+  -webkit-mask-image: var(--mask);
+  mask-image: var(--mask);
+  z-index: 0;
+}
+
+.fish {
+  --bodyW: 2rem;
+  --o: 0.95;
+  --l: 100%;
+  --c: rgba(0, 229, 255, 0.4);
+  --size: 10rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--size);
+  height: var(--size);
+  transform-style: preserve-3d;
+  transform-origin: center;
+
+  @media (min-width: 1000px) {
+    --size: 20rem;
+    --bodyW: 4rem;
+  }
+}
+
+.fish__skeleton {
+  --clip: polygon(0 var(--bodyW), 45% 0, 55% 0, 100% var(--bodyW), 50% 100%);
+  position: absolute;
+  top: calc(var(--bodyW) / 4);
+  left: calc(var(--bodyW) * 0.75);
+  width: var(--bodyW);
+  height: calc(var(--bodyW) * 4);
+  background:
+    repeating-linear-gradient(
+      0deg,
+      var(--c),
+      var(--c) 0.1rem,
+      transparent 0,
+      transparent 0.5rem
+    ),
+    linear-gradient(var(--c) var(--bodyW), transparent var(--bodyW)),
+    linear-gradient(
+      90deg,
+      transparent calc((var(--bodyW) / 2) - 0.1rem),
+      var(--c) 0,
+      var(--c) calc((var(--bodyW) / 2) + 0.1rem),
+      transparent 0
+    );
+  -webkit-clip-path: var(--clip);
+  clip-path: var(--clip);
+  opacity: 0;
+  transform: translate3d(0, 0, calc(var(--bodyW) / -2)) rotate(90deg);
+  transform-origin: center center;
+}
+
+.fish__inner {
+  --a: 9.5deg;
+  width: calc(var(--bodyW) * 1.5);
+  height: var(--size);
+  transform-style: preserve-3d;
+  transform: rotate(90deg);
+}
+
+.fish__body {
+  --l: 75%;
+  --c: rgba(0, 229, 255, 0.2);
+  position: absolute;
+  top: var(--bodyW);
+  left: 0;
+  width: var(--bodyW);
+  height: calc(3 * var(--bodyW));
+  background: var(--c);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform: translateZ(calc(var(--bodyW) / -2)) rotateX(var(--a));
+  transform-origin: center top;
+
+  &:nth-child(2) {
+    transform: translateZ(calc(var(--bodyW) / 2)) rotateX(calc(var(--a) * -1));
+  }
+
+  &:nth-child(3) {
+    transform: rotateY(90deg) translate3d(calc(var(--bodyW) / -2), 0, 0)
+      rotateX(var(--a));
+    transform-origin: left top;
+  }
+
+  &:nth-child(4) {
+    transform: rotateY(90deg) translate3d(calc(var(--bodyW) / 2), 0, 0)
+      rotateX(calc(var(--a) * -1));
+    transform-origin: right top;
+  }
+}
+
+.fish__head {
+  --a: 23.5deg;
+  --c: rgba(0, 229, 255, 0.3);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--bodyW);
+  height: var(--bodyW);
+  background: var(--c);
+  clip-path: polygon(40% 0, 60% 0, 100% 100%, 0 100%);
+  transform: translateZ(calc(var(--bodyW) / 2)) rotateX(var(--a));
+  transform-origin: center bottom;
+
+  &--2 {
+    transform: translateZ(calc(var(--bodyW) / -2)) rotateX(calc(var(--a) * -1));
+  }
+
+  &--3 {
+    transform: rotateY(90deg) translate3d(calc(var(--bodyW) / -2), 0, 0)
+      rotateX(calc(var(--a) * -1));
+    transform-origin: left bottom;
+  }
+
+  &--4 {
+    transform: rotateY(90deg) translate3d(calc(var(--bodyW) / 2), 0, 0)
+      rotateX(var(--a));
+    transform-origin: right bottom;
+  }
+}
+
+.fish__tail-main {
+  --c: rgba(0, 229, 255, 0.4);
+  position: absolute;
+  bottom: var(--bodyW);
+  left: 0;
+  width: var(--bodyW);
+  height: var(--bodyW);
+  background-color: var(--c);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+.fish__tail-fork {
+  --c: rgba(0, 229, 255, 0.4);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: var(--bodyW);
+  height: var(--bodyW);
+  background-color: var(--c);
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% 70%,
+    90% 100%,
+    70% 70%,
+    50% 30%,
+    30% 70%,
+    10% 100%,
+    0 70%
+  );
+  transform-origin: top center;
+  transform: rotateX(-45deg);
+  animation: tail 1000ms infinite alternate;
+}
+
+.fish__fin {
+  --c: rgba(0, 229, 255, 0.3);
+  position: absolute;
+  top: calc(var(--bodyW) * 1.5);
+  left: calc(var(--bodyW) / 8 * 3);
+  width: calc(var(--bodyW) / 8 * 3);
+  height: var(--bodyW);
+  background-color: var(--c);
+  clip-path: polygon(50% 0, 100% 30%, 100% 60%, 50% 100%, 0 60%, 0 30%);
+  transform-origin: top center;
+  transform: translateZ(calc(var(--bodyW) / 2)) rotateY(0deg) rotateX(5deg)
+    rotate(10deg);
+  animation: fin 1500ms infinite alternate linear;
+
+  &--2 {
+    transform: translateZ(calc(var(--bodyW) / -2)) rotateY(0deg) rotateX(-5deg)
+      rotate(10deg);
+    animation: fin2 1500ms infinite alternate linear;
+  }
+}
+
+@keyframes tail {
+  to {
+    transform: rotateX(45deg);
+  }
+}
+
+@keyframes fin {
+  100% {
+    transform: translateZ(calc(var(--bodyW) / 2)) rotateY(10deg) rotateX(20deg)
+      rotate(-10deg);
+  }
+}
+
+@keyframes fin2 {
+  100% {
+    transform: translateZ(calc(var(--bodyW) / -2)) rotateY(-10deg)
+      rotateX(-20deg) rotate(-10deg);
+  }
+}
+
+.lights,
+.bubbles,
+.rays {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.lights__light {
+  --size: 0.35rem;
+  position: absolute;
+  width: var(--size);
+  height: var(--size);
+  background: rgba(0, 229, 255, 0.6);
+  border-radius: 999px;
+  filter: blur(0.1rem);
+  animation: blink 2500ms infinite alternate;
+}
+
+.lights__light:nth-child(1) {
+  top: 10%;
+  left: 25%;
+  animation-delay: 0ms;
+}
+
+.lights__light:nth-child(2) {
+  top: 40%;
+  left: 12%;
+  animation-delay: 200ms;
+}
+
+.lights__light:nth-child(3) {
+  top: 60%;
+  left: 18%;
+  animation-delay: 350ms;
+}
+
+.lights__light:nth-child(4) {
+  top: 25%;
+  left: 66%;
+  animation-delay: 600ms;
+}
+
+.lights__light:nth-child(5) {
+  top: 80%;
+  left: 80%;
+  animation-delay: 900ms;
+}
+
+@keyframes blink {
+  to {
+    opacity: 0;
+  }
+}
