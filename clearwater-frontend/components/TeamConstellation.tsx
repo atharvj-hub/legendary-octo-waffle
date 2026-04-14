@@ -5,7 +5,6 @@ import gsap from 'gsap';
 
 type TeamNode = {
   detail: string;
-  id: string;
   left: string;
   name: string;
   role: string;
@@ -25,9 +24,8 @@ type ConstellationNode = TeamNode | TechNode;
 const nodes: ConstellationNode[] = [
   {
     type: 'team',
-    name: 'Atharv Jandial',
+    name: 'Atharv Jandal',
     role: 'Vision Engineer',
-    id: '25BEMNC15',
     detail: 'Core ML Pipeline & Model Training',
     top: '20%',
     left: '15%',
@@ -36,7 +34,6 @@ const nodes: ConstellationNode[] = [
     type: 'team',
     name: 'Advitya Sharma',
     role: 'Vision Engineer',
-    id: '25BEMNC05',
     detail: 'SS-UIE Neural Architecture',
     top: '65%',
     left: '20%',
@@ -45,7 +42,6 @@ const nodes: ConstellationNode[] = [
     type: 'team',
     name: 'Darsh Dhawan',
     role: 'Vision Engineer',
-    id: '25BECCS22',
     detail: 'DCP Physics Modeling',
     top: '30%',
     left: '65%',
@@ -54,7 +50,6 @@ const nodes: ConstellationNode[] = [
     type: 'team',
     name: 'Divij Singh Soodan',
     role: 'Vision Engineer',
-    id: '25BECSE26',
     detail: 'Cross-class NMS & Detection',
     top: '75%',
     left: '70%',
@@ -95,8 +90,8 @@ const edges: Array<[number, number]> = [
 
 export default function TeamConstellation() {
   const containerRef = useRef<HTMLElement>(null);
-  const nodeRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const lineRefs = useRef<Array<SVGLineElement | null>>([]);
+  const nodesRef = useRef<Array<HTMLDivElement | null>>([]);
+  const linesRef = useRef<Array<SVGLineElement | null>>([]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -107,36 +102,37 @@ export default function TeamConstellation() {
 
     const ctx = gsap.context(() => {
       const physicsState = nodes.map(() => ({
-        x: 0,
-        y: 0,
-        vx: 0,
-        vy: 0,
-        wanderTheta: Math.random() * Math.PI * 2,
+        timeOffset: Math.random() * Math.PI * 2,
+        speed: gsap.utils.random(0.3, 0.6),
+        radiusX: gsap.utils.random(15, 30),
+        radiusY: gsap.utils.random(15, 30),
+        parallaxFactor: gsap.utils.random(15, 45),
       }));
 
-      const mouse = { x: -1000, y: -1000 };
+      const targetMouse = { x: 0, y: 0 };
+      const smoothMouse = { x: 0, y: 0 };
 
       const handleMouseMove = (event: MouseEvent) => {
-        mouse.x = event.clientX;
-        mouse.y = event.clientY;
+        targetMouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        targetMouse.y = (event.clientY / window.innerHeight) * 2 - 1;
       };
 
-      const handleResize = () => {
-        renderPhysics();
-      };
-
-      const xSetters = nodeRefs.current.map((element) =>
+      const xSetters = nodesRef.current.map((element) =>
         element ? gsap.quickSetter(element, 'x', 'px') : null,
       );
-      const ySetters = nodeRefs.current.map((element) =>
+      const ySetters = nodesRef.current.map((element) =>
         element ? gsap.quickSetter(element, 'y', 'px') : null,
       );
 
       const renderPhysics = () => {
+        smoothMouse.x += (targetMouse.x - smoothMouse.x) * 0.05;
+        smoothMouse.y += (targetMouse.y - smoothMouse.y) * 0.05;
+
+        const time = Date.now() / 1000;
         const containerRect = container.getBoundingClientRect();
 
         physicsState.forEach((state, index) => {
-          const element = nodeRefs.current[index];
+          const element = nodesRef.current[index];
           const xSetter = xSetters[index];
           const ySetter = ySetters[index];
 
@@ -144,45 +140,19 @@ export default function TeamConstellation() {
             return;
           }
 
-          state.wanderTheta += 0.015;
-          state.vx += Math.cos(state.wanderTheta) * 0.05;
-          state.vy += Math.sin(state.wanderTheta) * 0.05;
+          const wanderX = Math.sin(time * state.speed + state.timeOffset) * state.radiusX;
+          const wanderY = Math.cos(time * state.speed + state.timeOffset) * state.radiusY;
+          const parallaxX = -smoothMouse.x * state.parallaxFactor;
+          const parallaxY = -smoothMouse.y * state.parallaxFactor;
 
-          const rect = element.getBoundingClientRect();
-          const elementCenterX = rect.left + rect.width / 2;
-          const elementCenterY = rect.top + rect.height / 2;
-          const dx = elementCenterX - mouse.x;
-          const dy = elementCenterY - mouse.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          const safeDistance = Math.max(distance, 0.001);
-          const repelRadius = 250;
-
-          if (distance < repelRadius) {
-            const force = (repelRadius - distance) / repelRadius;
-
-            state.vx += (dx / safeDistance) * force * 1.5;
-            state.vy += (dy / safeDistance) * force * 1.5;
-          }
-
-          const springForce = 0.01;
-          state.vx += (0 - state.x) * springForce;
-          state.vy += (0 - state.y) * springForce;
-
-          const friction = 0.92;
-          state.vx *= friction;
-          state.vy *= friction;
-
-          state.x += state.vx;
-          state.y += state.vy;
-
-          xSetter(state.x);
-          ySetter(state.y);
+          xSetter(wanderX + parallaxX);
+          ySetter(wanderY + parallaxY);
         });
 
         edges.forEach(([startIndex, endIndex], index) => {
-          const startNode = nodeRefs.current[startIndex];
-          const endNode = nodeRefs.current[endIndex];
-          const line = lineRefs.current[index];
+          const startNode = nodesRef.current[startIndex];
+          const endNode = nodesRef.current[endIndex];
+          const line = linesRef.current[index];
 
           if (!startNode || !endNode || !line) {
             return;
@@ -203,14 +173,12 @@ export default function TeamConstellation() {
       };
 
       window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('resize', handleResize);
       renderPhysics();
       gsap.ticker.add(renderPhysics);
 
       return () => {
         gsap.ticker.remove(renderPhysics);
         window.removeEventListener('mousemove', handleMouseMove);
-        window.removeEventListener('resize', handleResize);
       };
     }, containerRef);
 
@@ -223,7 +191,7 @@ export default function TeamConstellation() {
       ref={containerRef}
       className="relative min-h-screen w-full overflow-hidden border-t border-white/5 bg-[#030712] py-24"
     >
-      <p className="absolute top-24 left-1/2 z-20 -translate-x-1/2 text-xs uppercase tracking-[0.3em] text-[#00E5FF]">
+      <p className="pointer-events-none absolute top-24 left-1/2 z-20 -translate-x-1/2 text-xs uppercase tracking-[0.3em] text-[#00E5FF]">
         The Architects
       </p>
 
@@ -232,7 +200,7 @@ export default function TeamConstellation() {
           <line
             key={`line-${index}`}
             ref={(element) => {
-              lineRefs.current[index] = element;
+              linesRef.current[index] = element;
             }}
             stroke="rgba(255,255,255,0.08)"
             strokeWidth="1"
@@ -245,13 +213,13 @@ export default function TeamConstellation() {
         <div
           key={`node-${index}`}
           ref={(element) => {
-            nodeRefs.current[index] = element;
+            nodesRef.current[index] = element;
           }}
           className="group absolute z-10 w-max -translate-x-1/2 -translate-y-1/2"
           style={{ top: node.top, left: node.left }}
         >
           {node.type === 'team' ? (
-            <div className="flex cursor-crosshair flex-col items-center">
+            <div className="flex cursor-pointer flex-col items-center">
               <span className="font-serif text-3xl text-slate-300 transition-colors duration-300 group-hover:text-white md:text-4xl">
                 /{node.name.toLowerCase().replaceAll(' ', '-')}
               </span>
@@ -263,14 +231,9 @@ export default function TeamConstellation() {
                 <p className="mb-4 font-sans text-sm text-slate-200">{node.detail}</p>
 
                 <div className="flex w-full items-center justify-between border-t border-white/10 pt-3">
-                  <div className="flex flex-col gap-1">
-                    <span className="text-[9px] font-bold uppercase tracking-widest text-[#00E5FF]">
-                      {node.id}
-                    </span>
-                    <span className="text-[9px] uppercase tracking-widest text-slate-500">
-                      {node.role}
-                    </span>
-                  </div>
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-slate-500">
+                    {node.role}
+                  </span>
 
                   <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white/5">
                     <svg
@@ -280,8 +243,6 @@ export default function TeamConstellation() {
                       fill="none"
                       stroke="#00E5FF"
                       strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
                       aria-hidden="true"
                     >
                       <path d="M5 12h14" />
