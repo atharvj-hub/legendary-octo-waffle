@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import BackgroundFish from '../components/BackgroundFish';
 import Nav from '../components/Nav';
+import './fish.scss';
 import './globals.css';
 
 const geistSans = Geist({
@@ -28,6 +30,7 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
         <div className="site-shell">
+          <BackgroundFish />
           <Nav />
           {children}
         </div>

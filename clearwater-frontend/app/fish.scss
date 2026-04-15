@@ -1,268 +1,212 @@
+// ─────────────────────────────────────────────
+// fish.scss — Scroll-triggered deep-sea fish
+// ─────────────────────────────────────────────
+ 
+// Colour tokens
+$fish-body:     rgba(20, 40, 80, 0.55);
+$fish-head:     rgba(15, 30, 70, 0.70);
+$fish-fin:      rgba(10, 20, 60, 0.45);
+$fish-tail:     rgba(10, 20, 60, 0.50);
+$fish-skeleton: rgba(80, 160, 255, 0.18);
+$fish-glow:     rgba(0, 229, 255, 0.12);
+$light-core:    rgba(0, 229, 255, 0.20);
+ 
+// ── Wrapper ──────────────────────────────────
 .fish-wrapper {
-  --mask: linear-gradient(180deg, rgba(0, 0, 0, 1), transparent);
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  perspective: 100rem;
-  perspective-origin: center center;
-  transform-style: preserve-3d;
-  pointer-events: none;
-  -webkit-mask-image: var(--mask);
-  mask-image: var(--mask);
-  z-index: 0;
+  position: absolute;
+  inset: 0;
+  perspective: 800px;
+  overflow: hidden;
 }
-
+ 
+// ── Fish root ────────────────────────────────
 .fish {
-  --bodyW: 2rem;
-  --o: 0.95;
-  --l: 100%;
-  --c: rgba(0, 229, 255, 0.4);
-  --size: 10rem;
   position: absolute;
   top: 0;
   left: 0;
-  width: var(--size);
-  height: var(--size);
+  width: 120px;
+  height: 50px;
   transform-style: preserve-3d;
-  transform-origin: center;
-
-  @media (min-width: 1000px) {
-    --size: 20rem;
-    --bodyW: 4rem;
-  }
+  will-change: transform;
+  filter: drop-shadow(0 0 18px rgba(0, 229, 255, 0.25));
 }
-
-.fish__skeleton {
-  --clip: polygon(0 var(--bodyW), 45% 0, 55% 0, 100% var(--bodyW), 50% 100%);
-  position: absolute;
-  top: calc(var(--bodyW) / 4);
-  left: calc(var(--bodyW) * 0.75);
-  width: var(--bodyW);
-  height: calc(var(--bodyW) * 4);
-  background:
-    repeating-linear-gradient(
-      0deg,
-      var(--c),
-      var(--c) 0.1rem,
-      transparent 0,
-      transparent 0.5rem
-    ),
-    linear-gradient(var(--c) var(--bodyW), transparent var(--bodyW)),
-    linear-gradient(
-      90deg,
-      transparent calc((var(--bodyW) / 2) - 0.1rem),
-      var(--c) 0,
-      var(--c) calc((var(--bodyW) / 2) + 0.1rem),
-      transparent 0
-    );
-  -webkit-clip-path: var(--clip);
-  clip-path: var(--clip);
-  opacity: 0;
-  transform: translate3d(0, 0, calc(var(--bodyW) / -2)) rotate(90deg);
-  transform-origin: center center;
-}
-
+ 
+// ── Inner (fades on deep dive) ───────────────
 .fish__inner {
-  --a: 9.5deg;
-  width: calc(var(--bodyW) * 1.5);
-  height: var(--size);
-  transform-style: preserve-3d;
-  transform: rotate(90deg);
+  position: absolute;
+  inset: 0;
 }
-
+ 
+// ── Body segments ────────────────────────────
 .fish__body {
-  --l: 75%;
-  --c: rgba(0, 229, 255, 0.2);
   position: absolute;
-  top: var(--bodyW);
-  left: 0;
-  width: var(--bodyW);
-  height: calc(3 * var(--bodyW));
-  background: var(--c);
-  clip-path: polygon(0 0, 100% 0, 50% 100%);
-  transform: translateZ(calc(var(--bodyW) / -2)) rotateX(var(--a));
-  transform-origin: center top;
-
+  border-radius: 50%;
+  background: $fish-body;
+  backdrop-filter: blur(4px);
+ 
+  &:nth-child(1) {
+    width: 80px;
+    height: 36px;
+    top: 7px;
+    left: 20px;
+    background: linear-gradient(135deg, rgba(30,60,120,0.6), rgba(10,20,50,0.5));
+  }
   &:nth-child(2) {
-    transform: translateZ(calc(var(--bodyW) / 2)) rotateX(calc(var(--a) * -1));
+    width: 60px;
+    height: 28px;
+    top: 11px;
+    left: 28px;
+    background: rgba(40, 80, 160, 0.3);
   }
-
   &:nth-child(3) {
-    transform: rotateY(90deg) translate3d(calc(var(--bodyW) / -2), 0, 0)
-      rotateX(var(--a));
-    transform-origin: left top;
+    width: 40px;
+    height: 20px;
+    top: 15px;
+    left: 36px;
+    background: rgba(0, 229, 255, 0.06);
   }
-
   &:nth-child(4) {
-    transform: rotateY(90deg) translate3d(calc(var(--bodyW) / 2), 0, 0)
-      rotateX(calc(var(--a) * -1));
-    transform-origin: right top;
+    // lateral line
+    width: 70px;
+    height: 2px;
+    top: 24px;
+    left: 22px;
+    background: linear-gradient(90deg, transparent, rgba(0,229,255,0.4), transparent);
+    border-radius: 1px;
   }
 }
-
+ 
+// ── Head ─────────────────────────────────────
 .fish__head {
-  --a: 23.5deg;
-  --c: rgba(0, 229, 255, 0.3);
   position: absolute;
-  top: 0;
-  left: 0;
-  width: var(--bodyW);
-  height: var(--bodyW);
-  background: var(--c);
-  clip-path: polygon(40% 0, 60% 0, 100% 100%, 0 100%);
-  transform: translateZ(calc(var(--bodyW) / 2)) rotateX(var(--a));
-  transform-origin: center bottom;
-
+  border-radius: 50%;
+  background: $fish-head;
+ 
+  // Main dome
+  &:not([class*="--"]) {
+    width: 42px;
+    height: 38px;
+    top: 6px;
+    left: 4px;
+  }
+  // Eye socket
   &--2 {
-    transform: translateZ(calc(var(--bodyW) / -2)) rotateX(calc(var(--a) * -1));
+    width: 10px;
+    height: 10px;
+    top: 12px;
+    left: 16px;
+    background: rgba(0, 229, 255, 0.7);
+    box-shadow: 0 0 8px rgba(0, 229, 255, 0.8);
   }
-
+  // Iris
   &--3 {
-    transform: rotateY(90deg) translate3d(calc(var(--bodyW) / -2), 0, 0)
-      rotateX(calc(var(--a) * -1));
-    transform-origin: left bottom;
+    width: 5px;
+    height: 5px;
+    top: 14px;
+    left: 18px;
+    background: #fff;
+    border-radius: 50%;
   }
-
+  // Mouth slit
   &--4 {
-    transform: rotateY(90deg) translate3d(calc(var(--bodyW) / 2), 0, 0)
-      rotateX(var(--a));
-    transform-origin: right bottom;
+    width: 10px;
+    height: 3px;
+    top: 28px;
+    left: 6px;
+    background: rgba(0,229,255,0.3);
+    border-radius: 2px;
   }
 }
-
+ 
+// ── Tail ─────────────────────────────────────
 .fish__tail-main {
-  --c: rgba(0, 229, 255, 0.4);
   position: absolute;
-  bottom: var(--bodyW);
-  left: 0;
-  width: var(--bodyW);
-  height: var(--bodyW);
-  background-color: var(--c);
+  right: 0;
+  top: 8px;
+  width: 26px;
+  height: 34px;
+  background: $fish-tail;
+  clip-path: polygon(0 50%, 100% 0, 100% 100%);
+}
+ 
+.fish__tail-fork {
+  position: absolute;
+  right: -6px;
+  top: 12px;
+  width: 14px;
+  height: 26px;
+  background: rgba(0, 229, 255, 0.15);
   clip-path: polygon(50% 0, 100% 100%, 0 100%);
 }
-
-.fish__tail-fork {
-  --c: rgba(0, 229, 255, 0.4);
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: var(--bodyW);
-  height: var(--bodyW);
-  background-color: var(--c);
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    100% 70%,
-    90% 100%,
-    70% 70%,
-    50% 30%,
-    30% 70%,
-    10% 100%,
-    0 70%
-  );
-  transform-origin: top center;
-  transform: rotateX(-45deg);
-  animation: tail 1000ms infinite alternate;
-}
-
+ 
+// ── Fins ─────────────────────────────────────
 .fish__fin {
-  --c: rgba(0, 229, 255, 0.3);
   position: absolute;
-  top: calc(var(--bodyW) * 1.5);
-  left: calc(var(--bodyW) / 8 * 3);
-  width: calc(var(--bodyW) / 8 * 3);
-  height: var(--bodyW);
-  background-color: var(--c);
-  clip-path: polygon(50% 0, 100% 30%, 100% 60%, 50% 100%, 0 60%, 0 30%);
-  transform-origin: top center;
-  transform: translateZ(calc(var(--bodyW) / 2)) rotateY(0deg) rotateX(5deg)
-    rotate(10deg);
-  animation: fin 1500ms infinite alternate linear;
-
+  background: $fish-fin;
+  clip-path: polygon(0 100%, 50% 0, 100% 100%);
+ 
+  &:not([class*="--"]) {
+    // dorsal fin
+    width: 30px;
+    height: 18px;
+    top: -12px;
+    left: 44px;
+    background: rgba(0, 140, 200, 0.3);
+  }
   &--2 {
-    transform: translateZ(calc(var(--bodyW) / -2)) rotateY(0deg) rotateX(-5deg)
-      rotate(10deg);
-    animation: fin2 1500ms infinite alternate linear;
+    // pectoral fin
+    width: 20px;
+    height: 14px;
+    bottom: -6px;
+    left: 52px;
+    background: rgba(0, 140, 200, 0.25);
   }
 }
-
-@keyframes tail {
-  to {
-    transform: rotateX(45deg);
-  }
-}
-
-@keyframes fin {
-  100% {
-    transform: translateZ(calc(var(--bodyW) / 2)) rotateY(10deg) rotateX(20deg)
-      rotate(-10deg);
-  }
-}
-
-@keyframes fin2 {
-  100% {
-    transform: translateZ(calc(var(--bodyW) / -2)) rotateY(-10deg)
-      rotateX(-20deg) rotate(-10deg);
-  }
-}
-
-.lights,
-.bubbles,
-.rays {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.lights__light {
-  --size: 0.35rem;
+ 
+// ── Skeleton (x-ray layer) ────────────────────
+.fish__skeleton {
   position: absolute;
-  width: var(--size);
-  height: var(--size);
-  background: rgba(0, 229, 255, 0.6);
-  border-radius: 999px;
-  filter: blur(0.1rem);
-  animation: blink 2500ms infinite alternate;
+  inset: 6px 8px;
+  opacity: 0;
+  background-image:
+    // spine
+    linear-gradient(90deg, rgba(80,180,255,0.5) 1px, transparent 1px),
+    // ribs
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 8px,
+      rgba(80,180,255,0.2) 8px,
+      rgba(80,180,255,0.2) 9px
+    );
+  background-size: 100% 1px, 100% 100%;
+  background-position: center center, 0 0;
+  border-radius: 40% 40% 30% 30%;
 }
-
-.lights__light:nth-child(1) {
-  top: 10%;
-  left: 25%;
-  animation-delay: 0ms;
+ 
+// ── Ambient lights ────────────────────────────
+.lights {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
 }
-
-.lights__light:nth-child(2) {
-  top: 40%;
-  left: 12%;
-  animation-delay: 200ms;
+ 
+.lights__group {
+  position: absolute;
+  inset: 0;
 }
-
-.lights__light:nth-child(3) {
-  top: 60%;
-  left: 18%;
-  animation-delay: 350ms;
+ 
+.lights__light {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, $light-core 0%, transparent 70%);
+  will-change: transform;
+ 
+  &:nth-child(1) { width: 300px; height: 300px; top: 10%; left: 20%; opacity: 0.5; }
+  &:nth-child(2) { width: 200px; height: 200px; top: 60%; left: 70%; opacity: 0.35; }
+  &:nth-child(3) { width: 250px; height: 250px; top: 80%; left: 10%; opacity: 0.4; }
+  &:nth-child(4) { width: 180px; height: 180px; top: 30%; left: 85%; opacity: 0.3; }
+  &:nth-child(5) { width: 220px; height: 220px; top: 50%; left: 40%; opacity: 0.25; }
 }
-
-.lights__light:nth-child(4) {
-  top: 25%;
-  left: 66%;
-  animation-delay: 600ms;
-}
-
-.lights__light:nth-child(5) {
-  top: 80%;
-  left: 80%;
-  animation-delay: 900ms;
-}
-
-@keyframes blink {
-  to {
-    opacity: 0;
-  }
-}
+ 
