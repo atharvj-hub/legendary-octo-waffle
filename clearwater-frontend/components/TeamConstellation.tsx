@@ -1,8 +1,8 @@
 'use client';
- 
+
 import { useEffect, useRef, useState, useCallback } from 'react';
 import gsap from 'gsap';
- 
+
 type TeamNode = {
   detail: string;
   left: string;
@@ -12,16 +12,16 @@ type TeamNode = {
   type: 'team';
   emoji?: string;
 };
- 
+
 type TechNode = {
   left: string;
   name: string;
   top: string;
   type: 'tech';
 };
- 
+
 type ConstellationNode = TeamNode | TechNode;
- 
+
 const nodes: ConstellationNode[] = [
   {
     type: 'team',
@@ -78,16 +78,22 @@ const nodes: ConstellationNode[] = [
     left: '45%',
   },
 ];
- 
+
 const edges: Array<[number, number]> = [
   [0, 5], [1, 6], [2, 5], [3, 6],
   [4, 5], [4, 6], [5, 2], [0, 1],
   [1, 4], [2, 4], [3, 4],
 ];
- 
-const MAGNETIC_RADIUS = 180;
-const MAX_SCALE = 1.6;
-const MIN_SCALE = 0.75;
+
+// — Magnetic tuning —
+const MAGNETIC_RADIUS = 220;   // px — how far the wave reaches
+const MAX_SCALE_TEAM = 1.65;  // peak scale for team nodes
+const MAX_SCALE_TECH = 1.35;  // peak scale for tech nodes
+const SCALE_DURATION = 0.45;  // seconds for gsap.to scale tween
+
+// Pre-built mapRange helpers (module-level so they're stable across renders)
+const teamProximity = gsap.utils.mapRange(0, MAGNETIC_RADIUS, 1, 0);
+const techProximity = gsap.utils.mapRange(0, MAGNETIC_RADIUS * 0.8, 1, 0);
 
 type PhysicsState = {
   ox: number;
@@ -97,8 +103,10 @@ type PhysicsState = {
   radiusY: number;
   speed: number;
   timeOffset: number;
+  // phase shift so nodes don't all drift in sync
+  phaseShift: number;
 };
- 
+
 export default function TeamConstellation() {
   const containerRef = useRef<HTMLElement>(null);
   const nodesRef = useRef<Array<HTMLDivElement | null>>([]);
@@ -106,43 +114,44 @@ export default function TeamConstellation() {
   const mouseRef = useRef({ x: 0, y: 0 });
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const rafRef = useRef<number>(0);
- 
   const physicsRef = useRef<PhysicsState[]>([]);
- 
   const smoothMouse = useRef({ x: 0, y: 0 });
   const targetMouse = useRef({ x: 0, y: 0 });
- 
+
+
   const updateLines = useCallback(() => {
     const container = containerRef.current;
     if (!container) return;
-    const containerRect = container.getBoundingClientRect();
- 
+    const cr = container.getBoundingClientRect();
+
     edges.forEach(([si, ei], idx) => {
       const sNode = nodesRef.current[si];
       const eNode = nodesRef.current[ei];
       const line = linesRef.current[idx];
       if (!sNode || !eNode || !line) return;
- 
+
       const sr = sNode.getBoundingClientRect();
       const er = eNode.getBoundingClientRect();
-      line.setAttribute('x1', (sr.left + sr.width / 2 - containerRect.left).toString());
-      line.setAttribute('y1', (sr.top + sr.height / 2 - containerRect.top).toString());
-      line.setAttribute('x2', (er.left + er.width / 2 - containerRect.left).toString());
-      line.setAttribute('y2', (er.top + er.height / 2 - containerRect.top).toString());
+      line.setAttribute('x1', (sr.left + sr.width / 2 - cr.left).toString());
+      line.setAttribute('y1', (sr.top + sr.height / 2 - cr.top).toString());
+      line.setAttribute('x2', (er.left + er.width / 2 - cr.left).toString());
+      line.setAttribute('y2', (er.top + er.height / 2 - cr.top).toString());
     });
   }, []);
- 
+
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
+    // Initialise physics only once
     if (physicsRef.current.length === 0) {
-      physicsRef.current = nodes.map(() => ({
+      physicsRef.current = nodes.map((_, i) => ({
         timeOffset: Math.random() * Math.PI * 2,
-        speed: 0.3 + Math.random() * 0.3,
-        radiusX: 15 + Math.random() * 15,
-        radiusY: 15 + Math.random() * 15,
-        parallaxFactor: 15 + Math.random() * 30,
+        phaseShift: (i / nodes.length) * Math.PI * 2,  // evenly spread phases
+        speed: 0.25 + Math.random() * 0.25,        // slow, dreamy drift
+        radiusX: 12 + Math.random() * 14,
+        radiusY: 10 + Math.random() * 12,
+        parallaxFactor: 12 + Math.random() * 22,
         ox: 0,
         oy: 0,
       }));
@@ -155,106 +164,135 @@ export default function TeamConstellation() {
         y: (e.clientY / window.innerHeight) * 2 - 1,
       };
     };
- 
+
+    // When cursor leaves the section, push mouse position far away
+    // so all proximity values drop to 0 and nodes smoothly shrink back
+    const handleMouseLeave = () => {
+      mouseRef.current = { x: -9999, y: -9999 };
+      targetMouse.current = { x: 0, y: 0 };
+      setHoveredIndex(null);
+    };
+
     const tick = () => {
-      // Smooth mouse for parallax
-      smoothMouse.current.x += (targetMouse.current.x - smoothMouse.current.x) * 0.05;
-      smoothMouse.current.y += (targetMouse.current.y - smoothMouse.current.y) * 0.05;
- 
+      // Smooth lag on parallax mouse
+      smoothMouse.current.x += (targetMouse.current.x - smoothMouse.current.x) * 0.04;
+      smoothMouse.current.y += (targetMouse.current.y - smoothMouse.current.y) * 0.04;
+
       const time = Date.now() / 1000;
       const containerRect = container.getBoundingClientRect();
- 
+
       nodes.forEach((node, index) => {
         const el = nodesRef.current[index];
         const state = physicsRef.current[index];
         if (!el) return;
- 
-        const wX = Math.sin(time * state.speed + state.timeOffset) * state.radiusX;
-        const wY = Math.cos(time * state.speed + state.timeOffset) * state.radiusY;
+
+        // — Organic drift: two sine waves with individual phase offsets —
+        const driftX =
+          Math.sin(time * state.speed + state.timeOffset) * state.radiusX * 0.7 +
+          Math.sin(time * state.speed * 0.6 + state.phaseShift) * state.radiusX * 0.3;
+        const driftY =
+          Math.cos(time * state.speed + state.timeOffset) * state.radiusY * 0.7 +
+          Math.cos(time * state.speed * 0.55 + state.phaseShift) * state.radiusY * 0.3;
+
+        // — Parallax offset from cursor —
         const pX = -smoothMouse.current.x * state.parallaxFactor;
         const pY = -smoothMouse.current.y * state.parallaxFactor;
- 
-        state.ox = wX + pX;
-        state.oy = wY + pY;
- 
-        // Base position in container coords
-        const baseX =
-          (parseFloat(node.left) / 100) * containerRect.width + state.ox;
-        const baseY =
-          (parseFloat(node.top) / 100) * containerRect.height + state.oy;
- 
-        // Magnetic scale based on distance from cursor
-        const dx = mouseRef.current.x - containerRect.left - baseX;
-        const dy = mouseRef.current.y - containerRect.top - baseY;
-        const dist = Math.sqrt(dx * dx + dy * dy);
- 
-        let scale = 1;
-        if (dist < MAGNETIC_RADIUS) {
-          const t = 1 - dist / MAGNETIC_RADIUS; // 0 at edge, 1 at center
-          if (node.type === 'team') {
-            scale = 1 + (MAX_SCALE - 1) * Math.pow(t, 1.5);
-          } else {
-            scale = 1 + 0.4 * Math.pow(t, 2);
-          }
-        } else if (node.type === 'team' && hoveredIndex !== null && hoveredIndex !== index) {
-          // Slightly shrink other team nodes when one is hovered
-          scale = MIN_SCALE;
-        }
- 
+
+        state.ox = driftX + pX;
+        state.oy = driftY + pY;
+
+        // Apply position instantly (scale handled separately via gsap.to below)
         gsap.set(el, {
           x: state.ox,
           y: state.oy,
-          scale,
           transformOrigin: '50% 50%',
         });
+
+        // — Proximity-based scale via mapRange (smooth wave at radius edge) —
+        const baseX = (parseFloat(node.left) / 100) * containerRect.width + state.ox;
+        const baseY = (parseFloat(node.top) / 100) * containerRect.height + state.oy;
+        const dist = Math.hypot(
+          mouseRef.current.x - containerRect.left - baseX,
+          mouseRef.current.y - containerRect.top - baseY,
+        );
+
+        let targetScale: number;
+
+        if (node.type === 'team') {
+          // proximity 1 at cursor, 0 at radius edge — smooth, no snapping
+          const proximity = gsap.utils.clamp(0, 1, teamProximity(dist));
+          // ease the curve so the scale feels "pulled" rather than linear
+          const eased = Math.pow(proximity, 1.4);
+          targetScale = 1 + (MAX_SCALE_TEAM - 1) * eased;
+
+          // shrink other team nodes when a sibling is hovered
+          if (hoveredIndex !== null && hoveredIndex !== index && dist > MAGNETIC_RADIUS) {
+            targetScale = Math.min(targetScale, 0.78);
+          }
+        } else {
+          const proximity = gsap.utils.clamp(0, 1, techProximity(dist));
+          const eased = Math.pow(proximity, 2);
+          targetScale = 1 + (MAX_SCALE_TECH - 1) * eased;
+        }
+
+        // Use gsap.to with overwrite so transitions are silky — never a hard jump
+        gsap.to(el, {
+          scale: targetScale,
+          duration: SCALE_DURATION,
+          overwrite: 'auto',
+          ease: 'power2.out',
+        });
       });
- 
+
       updateLines();
       rafRef.current = requestAnimationFrame(tick);
     };
- 
-    window.addEventListener('mousemove', handleMouseMove);
+
+    container.addEventListener('mousemove', handleMouseMove);
+    container.addEventListener('mouseleave', handleMouseLeave);
     rafRef.current = requestAnimationFrame(tick);
- 
+
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
+      container.removeEventListener('mousemove', handleMouseMove);
+      container.removeEventListener('mouseleave', handleMouseLeave);
       cancelAnimationFrame(rafRef.current);
     };
   }, [hoveredIndex, updateLines]);
- 
+
   // Entry animation
   useEffect(() => {
     nodesRef.current.forEach((el, i) => {
       if (!el) return;
       gsap.fromTo(
         el,
-        { opacity: 0, scale: 0.5 },
+        { opacity: 0, scale: 0.4, y: 20 },
         {
           opacity: 1,
           scale: 1,
-          duration: 0.8,
-          delay: i * 0.1,
-          ease: 'back.out(1.4)',
+          y: 0,
+          duration: 0.9,
+          delay: i * 0.12,
+          ease: 'back.out(1.7)',
         },
       );
     });
   }, []);
- 
+
   return (
     <section
       id="team"
       ref={containerRef}
-      className="relative min-h-screen w-full overflow-hidden border-t border-white/5 bg-[#030712] py-24"
+      className="relative min-h-screen w-full overflow-visible border-t border-white/5 bg-[#030712] py-24"
       style={{ cursor: 'none' }}
     >
-      {/* Custom cursor glow */}
+      {/* Custom cursor */}
       <MagneticCursor />
- 
+
       <p className="pointer-events-none absolute top-24 left-1/2 z-20 -translate-x-1/2 text-xs uppercase tracking-[0.3em] text-[#00E5FF]">
         The Architects
       </p>
- 
-      {/* Ambient radial gradient that follows mouse */}
+
+      {/* Ambient gradient */}
       <div
         className="pointer-events-none absolute inset-0 z-0"
         style={{
@@ -262,9 +300,12 @@ export default function TeamConstellation() {
             'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,229,255,0.04) 0%, transparent 70%)',
         }}
       />
- 
+
       {/* SVG Lines */}
-      <svg className="pointer-events-none absolute inset-0 z-0 h-full w-full" aria-hidden="true">
+      <svg
+        className="pointer-events-none absolute inset-0 z-0 h-full w-full"
+        aria-hidden="true"
+      >
         <defs>
           <filter id="glow">
             <feGaussianBlur stdDeviation="2" result="coloredBlur" />
@@ -284,7 +325,7 @@ export default function TeamConstellation() {
           />
         ))}
       </svg>
- 
+
       {/* Nodes */}
       {nodes.map((node, index) => (
         <div
@@ -305,9 +346,9 @@ export default function TeamConstellation() {
     </section>
   );
 }
- 
+
 /* ─── Team Node ──────────────────────────────────────────────── */
- 
+
 function TeamNodeComponent({
   node,
   isHovered,
@@ -316,11 +357,11 @@ function TeamNodeComponent({
   isHovered: boolean;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
- 
+
   useEffect(() => {
     const card = cardRef.current;
     if (!card) return;
- 
+
     if (isHovered) {
       gsap.to(card, {
         opacity: 1,
@@ -339,15 +380,14 @@ function TeamNodeComponent({
       });
     }
   }, [isHovered]);
- 
+
   return (
     <div className="relative flex cursor-pointer flex-col items-center">
       {/* Hover ring glow */}
       {isHovered && (
         <span className="pointer-events-none absolute inset-0 -z-10 animate-ping rounded-full opacity-30 ring-1 ring-[#00E5FF]" />
       )}
- 
-      {/* The label — font size is controlled by the parent's gsap scale */}
+
       <span
         className="font-serif text-3xl md:text-4xl transition-colors duration-200"
         style={{
@@ -359,7 +399,7 @@ function TeamNodeComponent({
       >
         /{node.name.toLowerCase().replaceAll(' ', '-')}
       </span>
- 
+
       {/* Expanded card */}
       <div
         ref={cardRef}
@@ -369,19 +409,18 @@ function TeamNodeComponent({
         {/* Connector arrow */}
         <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-[#00E5FF]/20" />
         <div className="absolute top-full left-1/2 mt-px -translate-x-1/2 border-[7px] border-transparent border-t-[#080c14]" />
- 
-        {/* Accent line */}
+
         <div className="mb-4 h-px w-full bg-gradient-to-r from-[#00E5FF]/60 via-[#00E5FF]/20 to-transparent" />
- 
+
         <div className="mb-1 flex items-center gap-2">
           <span className="text-lg">{node.emoji}</span>
           <p className="font-sans text-sm font-medium leading-relaxed text-slate-100">
             {node.detail}
           </p>
         </div>
- 
+
         <p className="mb-4 text-xs text-slate-500">{node.name}</p>
- 
+
         <div className="flex w-full items-center justify-between border-t border-white/8 pt-3">
           <span className="text-[9px] font-bold uppercase tracking-widest text-[#00E5FF]/70">
             {node.role}
@@ -396,9 +435,9 @@ function TeamNodeComponent({
     </div>
   );
 }
- 
+
 /* ─── Tech Node ──────────────────────────────────────────────── */
- 
+
 function TechNodeComponent({ node }: { node: TechNode }) {
   return (
     <span className="cursor-default font-mono text-base text-slate-700 transition-colors duration-300 hover:text-slate-400">
@@ -406,38 +445,42 @@ function TechNodeComponent({ node }: { node: TechNode }) {
     </span>
   );
 }
- 
+
 /* ─── Custom Cursor ──────────────────────────────────────────── */
- 
+
 function MagneticCursor() {
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
- 
+
   useEffect(() => {
     const dot = dotRef.current;
     const ring = ringRef.current;
     if (!dot || !ring) return;
- 
+
     let mx = 0, my = 0;
     let rx = 0, ry = 0;
- 
+    let frameId = 0;
+
     const onMove = (e: MouseEvent) => {
       mx = e.clientX; my = e.clientY;
       gsap.set(dot, { x: mx, y: my });
     };
- 
+
     const tick = () => {
       rx += (mx - rx) * 0.12;
       ry += (my - ry) * 0.12;
       gsap.set(ring, { x: rx, y: ry });
-      requestAnimationFrame(tick);
+      frameId = requestAnimationFrame(tick);
     };
- 
+
     window.addEventListener('mousemove', onMove);
-    tick();
-    return () => window.removeEventListener('mousemove', onMove);
+    frameId = requestAnimationFrame(tick);
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      cancelAnimationFrame(frameId);
+    };
   }, []);
- 
+
   return (
     <>
       <div
