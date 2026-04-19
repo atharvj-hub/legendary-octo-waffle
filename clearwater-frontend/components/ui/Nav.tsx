@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import MagneticButton from './ui/MagneticButton';
+import MagneticButton from './MagneticButton';
 
 export default function Nav() {
   const pathname = usePathname();
