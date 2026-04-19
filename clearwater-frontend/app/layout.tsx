@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-import BackgroundFish from '../components/BackgroundFish';
-import Nav from '../components/Nav';
+import BackgroundFish from '../components/ui/BackgroundFish';
+import Nav from '../components/ui/Nav';
 import './fish.scss';
 import './globals.css';
 
