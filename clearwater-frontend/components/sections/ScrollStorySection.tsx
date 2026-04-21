@@ -101,7 +101,7 @@ export default function ScrollStorySection() {
       className="relative w-full bg-[#030712] py-32"
     >
       {/* Section header */}
-      <div className="story-section-label mx-auto mb-24 max-w-5xl px-8 opacity-0">
+      <div className="story-section-label relative z-10 mx-auto mb-24 max-w-5xl px-8 opacity-0">
         <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.35em] text-[#00E5FF]/60">
           How It Works
         </p>
@@ -115,7 +115,7 @@ export default function ScrollStorySection() {
       </div>
 
       {/* Beat panels */}
-      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 lg:px-8">
+      <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-8 px-6 lg:px-8">
         {BEATS.map((beat, i) => (
           <div
             key={beat.id}

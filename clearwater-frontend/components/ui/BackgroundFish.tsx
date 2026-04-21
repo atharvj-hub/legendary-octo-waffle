@@ -181,7 +181,7 @@ export default function BackgroundFish() {
   }, []);
 
   return (
-    <div ref={containerRef} className="pointer-events-none fixed inset-0 z-0">
+    <div ref={containerRef} className="pointer-events-none fixed inset-0 z-[1]">
       <div className="lights">
         <div className="lights__group">
           {Array.from({ length: 5 }).map((_, index) => (

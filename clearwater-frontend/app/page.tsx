@@ -5,7 +5,7 @@ import TeamConstellation from '@/components/TeamConstellation';
 
 export default function HomePage() {
   return (
-    <main className="relative z-10">
+    <main className="relative">
       <HeroSection />
       <ScrollStorySection />
       <UploadSection />

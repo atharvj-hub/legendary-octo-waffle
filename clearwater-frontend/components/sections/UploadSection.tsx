@@ -301,7 +301,7 @@ export default function UploadSection() {
         <div className="absolute left-1/2 top-1/2 h-[500px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#00E5FF]/[0.025] blur-3xl" />
       </div>
 
-      <div className="relative mx-auto max-w-4xl px-6">
+      <div className="relative z-10 mx-auto max-w-4xl px-6">
         <div className="upload-reveal mb-16 opacity-0">
           <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.35em] text-[#00E5FF]/60">
             Processing Engine
