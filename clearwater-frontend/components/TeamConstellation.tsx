@@ -113,10 +113,15 @@ export default function TeamConstellation() {
   const linesRef = useRef<Array<SVGLineElement | null>>([]);
   const mouseRef = useRef({ x: 0, y: 0 });
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const hoveredIndexRef = useRef<number | null>(null);
   const rafRef = useRef<number>(0);
   const physicsRef = useRef<PhysicsState[]>([]);
   const smoothMouse = useRef({ x: 0, y: 0 });
   const targetMouse = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    hoveredIndexRef.current = hoveredIndex;
+  }, [hoveredIndex]);
 
 
   const updateLines = useCallback(() => {
@@ -163,6 +168,18 @@ export default function TeamConstellation() {
         x: (e.clientX / window.innerWidth) * 2 - 1,
         y: (e.clientY / window.innerHeight) * 2 - 1,
       };
+
+      const target = e.target instanceof Element
+        ? e.target.closest<HTMLElement>('[data-team-node="true"]')
+        : null;
+      const nextHoveredIndex = target?.dataset.teamNodeIndex
+        ? Number(target.dataset.teamNodeIndex)
+        : null;
+
+      if (hoveredIndexRef.current !== nextHoveredIndex) {
+        hoveredIndexRef.current = nextHoveredIndex;
+        setHoveredIndex(nextHoveredIndex);
+      }
     };
 
     // When cursor leaves the section, push mouse position far away
@@ -170,6 +187,7 @@ export default function TeamConstellation() {
     const handleMouseLeave = () => {
       mouseRef.current = { x: -9999, y: -9999 };
       targetMouse.current = { x: 0, y: 0 };
+      hoveredIndexRef.current = null;
       setHoveredIndex(null);
     };
 
@@ -332,9 +350,14 @@ export default function TeamConstellation() {
           key={`node-${index}`}
           ref={(el) => { nodesRef.current[index] = el; }}
           className="group absolute z-10 w-max -translate-x-1/2 -translate-y-1/2"
-          style={{ top: node.top, left: node.left, opacity: 0 }}
-          onMouseEnter={() => node.type === 'team' && setHoveredIndex(index)}
-          onMouseLeave={() => setHoveredIndex(null)}
+          style={{
+            top: node.top,
+            left: node.left,
+            opacity: 0,
+            zIndex: hoveredIndex === index ? 40 : 10,
+          }}
+          data-team-node={node.type === 'team' ? 'true' : undefined}
+          data-team-node-index={node.type === 'team' ? index : undefined}
         >
           {node.type === 'team' ? (
             <TeamNodeComponent node={node} isHovered={hoveredIndex === index} />
@@ -367,16 +390,18 @@ function TeamNodeComponent({
         opacity: 1,
         y: 0,
         scale: 1,
-        duration: 0.35,
+        duration: 0.28,
         ease: 'back.out(1.6)',
+        overwrite: 'auto',
       });
     } else {
       gsap.to(card, {
         opacity: 0,
-        y: 12,
-        scale: 0.92,
-        duration: 0.2,
-        ease: 'power2.in',
+        y: 26,
+        scale: 0.88,
+        duration: 0.18,
+        ease: 'power3.in',
+        overwrite: 'auto',
       });
     }
   }, [isHovered]);
@@ -404,7 +429,11 @@ function TeamNodeComponent({
       <div
         ref={cardRef}
         className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-5 flex w-72 -translate-x-1/2 flex-col items-start rounded-2xl border border-white/10 bg-[#080c14]/98 p-5 text-left shadow-[0_24px_60px_rgba(0,0,0,0.9),0_0_0_1px_rgba(0,229,255,0.08)] backdrop-blur-xl"
-        style={{ opacity: 0, transform: 'translateY(12px) scale(0.92)' }}
+        style={{
+          opacity: 0,
+          transform: 'translateY(26px) scale(0.88)',
+          transformOrigin: '50% 100%',
+        }}
       >
         {/* Connector arrow */}
         <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-[#00E5FF]/20" />

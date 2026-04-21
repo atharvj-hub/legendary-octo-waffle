@@ -41,54 +41,58 @@ export default function Nav() {
   return (
     <nav
       id="global-nav"
-      className="fixed top-0 left-0 z-50 flex w-full items-center justify-between border-b border-white/5 bg-black/50 px-6 py-4 backdrop-blur-md md:px-12"
+      className="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-black/50 px-4 py-4 backdrop-blur-md md:px-6 lg:px-8"
     >
-      <div className="pointer-events-auto flex flex-col">
-        <span className="text-lg font-bold tracking-wide text-white">Clearwater</span>
-        <span className="text-[10px] uppercase tracking-[0.3em] text-slate-500">Underwater Vision</span>
+      <div className="mx-auto flex w-full max-w-[1400px] items-center gap-4 md:gap-6">
+        <div className="pointer-events-auto flex min-w-0 flex-1 flex-col md:flex-none md:min-w-[220px]">
+          <span className="text-lg font-bold tracking-wide text-white">Clearwater</span>
+          <span className="text-[10px] uppercase tracking-[0.3em] text-slate-500">Underwater Vision</span>
+        </div>
+
+        <div className="hidden flex-1 items-center justify-center gap-2 text-xs uppercase tracking-widest md:flex">
+          <MagneticButton
+            href="/#story"
+            strength={0.18}
+            labelStrength={0.08}
+            variant="ghost"
+            className={getLinkClass('story')}
+          >
+            Story
+          </MagneticButton>
+
+          <MagneticButton
+            href="/#team"
+            strength={0.18}
+            labelStrength={0.08}
+            variant="ghost"
+            className={getLinkClass('team')}
+          >
+            Team
+          </MagneticButton>
+
+          <MagneticButton
+            href="/#upload"
+            strength={0.18}
+            labelStrength={0.08}
+            variant="ghost"
+            className={getLinkClass('upload')}
+          >
+            Lab
+          </MagneticButton>
+        </div>
+
+        <div className="flex flex-1 justify-end md:min-w-[220px] md:flex-none">
+          <MagneticButton
+            href="/#upload"
+            strength={0.24}
+            labelStrength={0.12}
+            variant="ghost"
+            className="lab-beacon lab-beacon--nav !border-transparent !p-0"
+          >
+            Enter the Lab &rarr;
+          </MagneticButton>
+        </div>
       </div>
-
-      <div className="hidden items-center gap-2 text-xs uppercase tracking-widest md:flex">
-        <MagneticButton
-          href="/#story"
-          strength={0.2}
-          labelStrength={0.1}
-          variant="ghost"
-          className={getLinkClass('story')}
-        >
-          Story
-        </MagneticButton>
-
-        <MagneticButton
-          href="/#team"
-          strength={0.2}
-          labelStrength={0.1}
-          variant="ghost"
-          className={getLinkClass('team')}
-        >
-          Team
-        </MagneticButton>
-
-        <MagneticButton
-          href="/#lab"
-          strength={0.2}
-          labelStrength={0.1}
-          variant="ghost"
-          className={getLinkClass('lab')}
-        >
-          Lab
-        </MagneticButton>
-      </div>
-
-      <MagneticButton
-        href="/#lab"
-        strength={0.4}
-        labelStrength={0.2}
-        variant="ghost"
-        className="lab-beacon lab-beacon--nav !border-transparent !p-0"
-      >
-        Enter the Lab &rarr;
-      </MagneticButton>
     </nav>
   );
 }
