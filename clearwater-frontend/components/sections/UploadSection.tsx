@@ -2,12 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
+import { CustomEase } from 'gsap/CustomEase';
 import { CustomWiggle } from 'gsap/CustomWiggle';
 import { Physics2DPlugin } from 'gsap/Physics2DPlugin';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger, CustomWiggle, Physics2DPlugin);
+  gsap.registerPlugin(ScrollTrigger, CustomEase, CustomWiggle, Physics2DPlugin);
   CustomWiggle.create('rejectWiggle', { wiggles: 7, type: 'anticipate' });
   CustomWiggle.create('successWiggle', { wiggles: 3, type: 'easeOut' });
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { CustomEase } from 'gsap/CustomEase';
 import { CustomWiggle } from 'gsap/CustomWiggle';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { Physics2DPlugin } from 'gsap/Physics2DPlugin';
@@ -11,6 +12,7 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(
     ScrollTrigger,
     MotionPathPlugin,
+    CustomEase,
     CustomWiggle,
     Physics2DPlugin,
   );
