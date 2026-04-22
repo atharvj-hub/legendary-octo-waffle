@@ -41,12 +41,12 @@ export default function Nav() {
   return (
     <nav
       id="global-nav"
-      className="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-black/50 px-4 py-4 backdrop-blur-md md:px-6 lg:px-8"
+      className="fixed inset-x-0 top-0 z-50 border-b border-white/6 bg-[rgba(4,11,14,0.62)] px-4 py-4 backdrop-blur-xl md:px-6 lg:px-8"
     >
       <div className="mx-auto flex w-full max-w-[1400px] items-center gap-4 md:gap-6">
         <div className="pointer-events-auto flex min-w-0 flex-1 flex-col md:flex-none md:min-w-[220px]">
           <span className="text-lg font-bold tracking-wide text-white">Clearwater</span>
-          <span className="text-[10px] uppercase tracking-[0.3em] text-slate-500">Underwater Vision</span>
+          <span className="text-[10px] uppercase tracking-[0.3em] text-[rgba(213,187,139,0.64)]">Underwater Vision</span>
         </div>
 
         <div className="hidden flex-1 items-center justify-center gap-2 text-xs uppercase tracking-widest md:flex">

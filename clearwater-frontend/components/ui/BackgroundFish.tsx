@@ -20,7 +20,7 @@ if (typeof window !== 'undefined') {
   CustomWiggle.create('finWiggle', { wiggles: 4, type: 'uniform' });
 }
 
-const BUBBLE_COUNT = 6;
+const BUBBLE_COUNT = 8;
 
 export default function BackgroundFish() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -52,25 +52,21 @@ export default function BackgroundFish() {
         return;
       }
 
-      const rx = window.innerWidth < 1000 ? window.innerWidth / 1200 : 1;
-      const ry = window.innerHeight < 700 ? window.innerHeight / 1200 : 1;
+      const width = window.innerWidth;
+      const height = window.innerHeight;
 
       const path = [
-        { x: 800 * rx, y: 200 * ry },
-        { x: 900 * rx, y: 20 * ry },
-        { x: 1100 * rx, y: 100 * ry },
-        { x: 1000 * rx, y: 200 * ry },
-        { x: 900 * rx, y: 20 * ry },
-        { x: 10 * rx, y: 500 * ry },
-        { x: 100 * rx, y: 300 * ry },
-        { x: 500 * rx, y: 400 * ry },
-        { x: 1000 * rx, y: 200 * ry },
-        { x: 1100 * rx, y: 300 * ry },
-        { x: 400 * rx, y: 400 * ry },
-        { x: 200 * rx, y: 250 * ry },
-        { x: 100 * rx, y: 300 * ry },
-        { x: 500 * rx, y: 450 * ry },
-        { x: 1100 * rx, y: 500 * ry },
+        { x: width * 0.74, y: height * 0.18 },
+        { x: width * 0.66, y: height * 0.12 },
+        { x: width * 0.56, y: height * 0.2 },
+        { x: width * 0.44, y: height * 0.36 },
+        { x: width * 0.3, y: height * 0.54 },
+        { x: width * 0.16, y: height * 0.66 },
+        { x: width * 0.12, y: height * 0.76 },
+        { x: width * 0.26, y: height * 0.72 },
+        { x: width * 0.44, y: height * 0.58 },
+        { x: width * 0.62, y: height * 0.42 },
+        { x: width * 0.74, y: height * 0.3 },
       ];
 
       const timeline = gsap.timeline({
@@ -82,40 +78,70 @@ export default function BackgroundFish() {
         },
       });
 
-      timeline
-        .to(
-          fish,
-          {
-            motionPath: {
-              path,
-              autoRotate: true,
-            },
-            duration: 10,
-            immediateRender: true,
+      gsap.set(fish, {
+        opacity: 0.94,
+        scale: 1.04,
+        rotateZ: -8,
+        rotateY: 0,
+        rotateX: 0,
+      });
+
+      timeline.to(
+        fish,
+        {
+          motionPath: {
+            path,
+            autoRotate: true,
           },
-          0,
-        )
-        .to(fish, { rotateX: 180 }, 1)
-        .to(fish, { rotateX: 0 }, 2.5)
-        .to(fish, { z: -500, duration: 2 }, 2.5)
-        .to(fish, { rotateX: 180 }, 4)
-        .to(fish, { rotateX: 0 }, 5.5)
-        .to(fish, { z: -50, duration: 2 }, 5)
-        .to(fish, { rotate: 0, duration: 1 }, '-=1');
+          duration: 10,
+          ease: 'none',
+          immediateRender: true,
+        },
+        0,
+      );
+
+      timeline
+        .to(fish, { scale: 1.12, rotateZ: 4, duration: 2.1, ease: 'sine.inOut' }, 0.2)
+        .to(fish, { scale: 0.98, rotateZ: -10, duration: 2.4, ease: 'sine.inOut' }, 2.8)
+        .to(fish, { scale: 1.08, rotateZ: 6, duration: 2.1, ease: 'sine.inOut' }, 5.3)
+        .to(fish, { scale: 1.02, rotateZ: -4, duration: 2.2, ease: 'sine.inOut' }, 7.5);
 
       if (fishSkeleton) {
-        timeline.to(fishSkeleton, { opacity: 0.6, duration: 0.1, repeat: 4 }, '-=3');
+        gsap.to(fishSkeleton, {
+          opacity: 0.28,
+          duration: 4.2,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut',
+        });
       }
-
-      timeline.to(fishHeadAndBody, { opacity: 0, duration: 0.1, repeat: 4 }, '-=3');
 
       if (fishInner) {
-        timeline.to(fishInner, { opacity: 0.1, duration: 1 }, '-=1');
+        gsap.to(fishInner, {
+          opacity: 0.92,
+          duration: 5,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut',
+        });
       }
 
-      if (fishSkeleton) {
-        timeline.to(fishSkeleton, { opacity: 0.1, duration: 1 }, '-=1');
-      }
+      gsap.to(fishHeadAndBody, {
+        opacity: 0.96,
+        duration: 4.4,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+        stagger: 0.06,
+      });
+
+      gsap.to(fish, {
+        yPercent: 4,
+        duration: 5.8,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+      });
 
       if (tailFork) {
         gsap.to(tailFork, {
@@ -181,7 +207,7 @@ export default function BackgroundFish() {
   }, []);
 
   return (
-    <div ref={containerRef} className="pointer-events-none fixed inset-0 z-[1]">
+    <div ref={containerRef} className="pointer-events-none fixed inset-0 z-[2]">
       <div className="lights">
         <div className="lights__group">
           {Array.from({ length: 5 }).map((_, index) => (
@@ -236,9 +262,9 @@ function spawnBubbleBurst(fish: HTMLElement, bubblePool: HTMLElement) {
       width: `${size}px`,
       height: `${size}px`,
       borderRadius: '50%',
-      border: '1px solid rgba(0,229,255,0.55)',
+      border: '1px solid rgba(124,214,204,0.55)',
       background:
-        'radial-gradient(circle at 35% 35%, rgba(0,229,255,0.18), transparent 70%)',
+        'radial-gradient(circle at 35% 35%, rgba(124,214,204,0.2), transparent 70%)',
       left: `${originX}px`,
       top: `${originY}px`,
       transform: 'translate(-50%,-50%)',

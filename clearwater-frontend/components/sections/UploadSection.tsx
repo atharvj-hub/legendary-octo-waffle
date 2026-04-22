@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { CustomEase } from 'gsap/CustomEase';
@@ -14,6 +15,8 @@ if (typeof window !== 'undefined') {
 }
 
 const PARTICLE_COUNT = 24;
+const PRIMARY_ACCENT = '#8edfd2';
+const SECONDARY_ACCENT = '#d5bb8b';
 
 type UploadState = 'idle' | 'dragging' | 'loaded' | 'processing' | 'done';
 
@@ -78,8 +81,8 @@ export default function UploadSection() {
       const particle = document.createElement('div');
       const accent =
         Math.random() > 0.3
-          ? `rgba(0,229,255,${gsap.utils.random(0.6, 0.9).toFixed(2)})`
-          : `rgba(0,255,204,${gsap.utils.random(0.5, 0.8).toFixed(2)})`;
+          ? `rgba(142,223,210,${gsap.utils.random(0.6, 0.9).toFixed(2)})`
+          : `rgba(213,187,139,${gsap.utils.random(0.45, 0.72).toFixed(2)})`;
 
       Object.assign(particle.style, {
         position: 'fixed',
@@ -177,7 +180,7 @@ export default function UploadSection() {
       setState('processing');
 
       const pulseTween = gsap.to(dropzoneRef.current, {
-        boxShadow: '0 0 0 3px rgba(0,229,255,0.3), 0 0 50px rgba(0,229,255,0.1)',
+        boxShadow: '0 0 0 3px rgba(142,223,210,0.28), 0 0 50px rgba(142,223,210,0.1)',
         duration: 0.9,
         repeat: -1,
         yoyo: true,
@@ -290,7 +293,7 @@ export default function UploadSection() {
   const isDone = state === 'done';
 
   return (
-    <section ref={sectionRef} id="upload" className="relative w-full bg-[#030712] py-32">
+    <section ref={sectionRef} id="upload" className="relative w-full bg-transparent py-32">
       <div
         ref={particlePoolRef}
         className="pointer-events-none fixed inset-0 z-[200] overflow-hidden"
@@ -298,12 +301,15 @@ export default function UploadSection() {
       />
 
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-1/2 h-[500px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#00E5FF]/[0.025] blur-3xl" />
+        <div
+          className="absolute left-1/2 top-1/2 h-[500px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
+          style={{ background: 'rgba(124,214,204,0.04)' }}
+        />
       </div>
 
       <div className="relative z-10 mx-auto max-w-4xl px-6">
         <div className="upload-reveal mb-16 opacity-0">
-          <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.35em] text-[#00E5FF]/60">
+          <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.35em] text-[rgba(213,187,139,0.72)]">
             Processing Engine
           </p>
           <h2
@@ -312,10 +318,10 @@ export default function UploadSection() {
           >
             Drop a frame.
             <br />
-            <em className="text-[#00E5FF]">Watch it transform.</em>
+            <em className="text-[#8edfd2]">Watch it transform.</em>
           </h2>
           <p className="mt-4 font-mono text-xs text-slate-600">
-            PNG · JPG · WEBP — invalid types trigger reject animation
+            PNG · JPG · WEBP - invalid types trigger reject animation
           </p>
         </div>
 
@@ -323,10 +329,10 @@ export default function UploadSection() {
           ref={dropzoneRef}
           className={`upload-reveal relative overflow-hidden rounded-3xl border opacity-0 transition-all duration-300 ${
             isDragging
-              ? 'border-[#00E5FF]/60 bg-[#00E5FF]/[0.06] shadow-[0_0_40px_rgba(0,229,255,0.12)]'
+              ? 'border-[rgba(142,223,210,0.6)] bg-[rgba(142,223,210,0.07)] shadow-[0_0_40px_rgba(142,223,210,0.12)]'
               : isLoaded
-                ? 'border-[#00E5FF]/20 bg-[#04121e]/80'
-                : 'border-dashed border-white/10 bg-[#04121e]/60 hover:border-white/20'
+                ? 'border-[rgba(142,223,210,0.22)] bg-[rgba(9,22,28,0.8)]'
+                : 'border-dashed border-white/10 bg-[rgba(9,22,28,0.62)] hover:border-white/20'
           }`}
           onDragEnter={onDragEnter}
           onDragLeave={onDragLeave}
@@ -344,7 +350,7 @@ export default function UploadSection() {
               />
               <div
                 className={`flex h-14 w-14 items-center justify-center rounded-full border transition-all duration-300 ${
-                  isDragging ? 'border-[#00E5FF]/60 bg-[#00E5FF]/15' : 'border-white/15 bg-white/5'
+                  isDragging ? 'border-[rgba(142,223,210,0.6)] bg-[rgba(142,223,210,0.14)]' : 'border-white/15 bg-white/5'
                 }`}
               >
                 <svg
@@ -352,7 +358,7 @@ export default function UploadSection() {
                   height="22"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke={isDragging ? '#00E5FF' : '#64748b'}
+                  stroke={isDragging ? PRIMARY_ACCENT : '#64748b'}
                   strokeWidth="1.5"
                   aria-hidden="true"
                 >
@@ -364,7 +370,7 @@ export default function UploadSection() {
               <div className="text-center">
                 <p
                   className={`font-mono text-sm uppercase tracking-widest transition-colors ${
-                    isDragging ? 'text-[#00E5FF]' : 'text-slate-400'
+                    isDragging ? 'text-[#8edfd2]' : 'text-slate-400'
                   }`}
                 >
                   {isDragging ? 'Release to upload' : 'Drop degraded frame here'}
@@ -378,28 +384,31 @@ export default function UploadSection() {
             <div className="flex min-h-[280px] items-center gap-6 p-8">
               {preview && (
                 <div className="relative h-48 w-64 flex-shrink-0 overflow-hidden rounded-xl border border-white/10">
-                  <img
+                  <Image
                     src={preview}
                     alt="Uploaded frame preview"
-                    className="h-full w-full object-cover"
+                    fill
+                    unoptimized
+                    sizes="256px"
+                    className="object-cover"
                   />
                   {isProcessing && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/60 backdrop-blur-sm">
-                      <div className="h-8 w-8 animate-spin rounded-full border-2 border-transparent border-t-[#00E5FF]" />
-                      <span className="font-mono text-[9px] uppercase tracking-widest text-[#00E5FF]/70">
-                        {mode === 'enhance' ? 'Enhancing…' : 'Detecting…'}
+                      <div className="h-8 w-8 animate-spin rounded-full border-2 border-transparent border-t-[#8edfd2]" />
+                      <span className="font-mono text-[9px] uppercase tracking-widest text-[rgba(142,223,210,0.7)]">
+                        {mode === 'enhance' ? 'Enhancing...' : 'Detecting...'}
                       </span>
                     </div>
                   )}
                   {isDone && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-[#00E5FF]/8">
+                    <div className="absolute inset-0 flex items-center justify-center bg-[rgba(142,223,210,0.08)]">
                       <svg
                         ref={checkRef}
                         width="36"
                         height="36"
                         viewBox="0 0 24 24"
                         fill="none"
-                        stroke="#00E5FF"
+                        stroke={PRIMARY_ACCENT}
                         strokeWidth="2"
                         style={{ opacity: 0 }}
                         aria-label="Complete"
@@ -416,7 +425,7 @@ export default function UploadSection() {
                     ? `Running ${mode === 'enhance' ? 'neural enhancement' : 'object detection'}…`
                     : isDone
                       ? `${mode === 'enhance' ? 'Enhancement' : 'Detection'} complete`
-                      : 'Frame loaded — select an operation below'}
+                      : 'Frame loaded - select an operation below'}
                 </p>
                 {isDone && (
                   <button
@@ -434,14 +443,14 @@ export default function UploadSection() {
         {(state === 'loaded' || isProcessing) && (
           <div className="upload-reveal mt-8 flex items-center justify-center gap-4 opacity-100">
             <MagBtn
-              accent="#00E5FF"
+              accent={PRIMARY_ACCENT}
               label="Run Enhancement"
               loading={isProcessing && mode === 'enhance'}
               disabled={isProcessing}
               onClick={() => runProcessing('enhance')}
             />
             <MagBtn
-              accent="rgba(255,255,255,0.12)"
+              accent={SECONDARY_ACCENT}
               label="Run Detection"
               border
               loading={isProcessing && mode === 'detect'}
@@ -453,8 +462,8 @@ export default function UploadSection() {
 
         <div ref={resultsRef} className="mt-12 opacity-0">
           {isDone && (
-            <div className="overflow-hidden rounded-3xl border border-white/8 bg-[#04121e]/80 p-1">
-              <div className="flex min-h-[300px] items-center justify-center rounded-2xl bg-[#020a10]">
+            <div className="overflow-hidden rounded-3xl border border-white/8 bg-[rgba(9,22,28,0.82)] p-1">
+              <div className="flex min-h-[300px] items-center justify-center rounded-2xl bg-[rgba(3,10,14,0.9)]">
                 <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-slate-600">
                   Comparison slider placeholder
                 </p>
@@ -464,7 +473,7 @@ export default function UploadSection() {
                   {['Marine Life', 'Coral', 'Debris'].map((item) => (
                     <span
                       key={item}
-                      className="rounded-full border border-[#00E5FF]/20 bg-[#00E5FF]/5 px-3 py-1 font-mono text-[9px] uppercase tracking-wider text-[#00E5FF]/70"
+                      className="rounded-full border border-[rgba(142,223,210,0.2)] bg-[rgba(142,223,210,0.06)] px-3 py-1 font-mono text-[9px] uppercase tracking-wider text-[rgba(142,223,210,0.72)]"
                     >
                       {item}
                     </span>
@@ -571,12 +580,12 @@ function MagBtn({
           border
             ? {
                 background: 'transparent',
-                border: '1px solid rgba(255,255,255,0.18)',
-                color: '#e2e8f0',
+                border: `1px solid ${accent}40`,
+                color: accent,
               }
             : {
                 background: accent,
-                color: '#020a10',
+                color: '#071219',
                 fontWeight: 600,
               }
         }
@@ -584,7 +593,7 @@ function MagBtn({
         {loading ? (
           <span className="flex items-center gap-2">
             <span className="h-3 w-3 animate-spin rounded-full border border-current border-t-transparent" />
-            Processing…
+            Processing...
           </span>
         ) : (
           <span ref={labelRef}>{label}</span>

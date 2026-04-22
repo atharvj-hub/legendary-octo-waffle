@@ -18,7 +18,7 @@ const titleText = 'CLEARWATER';
 const titleText2 = 'VISION';
 const flairParticles = Array.from({ length: TITLE_FLARE_COUNT }, (_, index) => ({
   size: 6 + (index % 3) * 4,
-  color: index % 4 === 0 ? 'rgba(255,255,255,0.95)' : 'rgba(0,229,255,0.92)',
+  color: index % 4 === 0 ? 'rgba(245,241,233,0.95)' : 'rgba(124,214,204,0.9)',
 }));
 
 export default function HeroSection() {
@@ -77,7 +77,7 @@ export default function HeroSection() {
 
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(0, 229, 255, ${particle.a * 0.55})`;
+        ctx.fillStyle = `rgba(124, 214, 204, ${particle.a * 0.52})`;
         ctx.fill();
       });
 
@@ -250,23 +250,23 @@ export default function HeroSection() {
     <section
       ref={sectionRef}
       id="hero"
-      className="relative h-screen w-full overflow-hidden bg-[#020a10]"
+      className="relative h-screen w-full overflow-hidden bg-transparent"
     >
-      <div ref={overlayRef} className="absolute inset-0 z-30 bg-[#020a10]" />
+      <div ref={overlayRef} className="absolute inset-0 z-30 bg-[#041016]" />
 
       <canvas
         ref={canvasRef}
         className="hero-depth-layer pointer-events-none absolute inset-0 z-[1]"
       />
 
-      <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#020a10] via-[#041520] to-[#020e1a]" />
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-[rgba(4,13,18,0.92)] via-[rgba(8,20,24,0.72)] to-[rgba(3,10,14,0.28)]" />
 
       <div
         className="pointer-events-none absolute inset-0 z-[2] opacity-30"
         style={{
           background:
-            'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,180,220,0.18) 0%, transparent 70%), ' +
-            'radial-gradient(ellipse 40% 30% at 30% 20%, rgba(0,229,255,0.08) 0%, transparent 60%)',
+            'radial-gradient(ellipse 82% 62% at 50% 0%, rgba(124,214,204,0.16) 0%, transparent 70%), ' +
+            'radial-gradient(ellipse 36% 28% at 32% 22%, rgba(213,187,139,0.1) 0%, transparent 58%)',
         }}
       />
 
@@ -279,17 +279,17 @@ export default function HeroSection() {
               left: `${10 + index * 11}%`,
               width: `${1.5 + (index % 3) * 0.8}%`,
               transform: `rotate(${-12 + index * 3.5}deg) skewX(${index % 2 === 0 ? -3 : 2}deg)`,
-              background: `linear-gradient(to bottom, rgba(0,200,255,${0.07 - index * 0.005}) 0%, transparent 100%)`,
+              background: `linear-gradient(to bottom, rgba(124,214,204,${0.065 - index * 0.004}) 0%, transparent 100%)`,
               opacity: 0,
             }}
           />
         ))}
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 z-[3] h-px bg-gradient-to-r from-transparent via-[#00E5FF]/20 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 z-[3] h-px bg-gradient-to-r from-transparent via-[rgba(124,214,204,0.22)] to-transparent" />
 
       <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center">
-        <p className="hero-cta mb-8 font-mono text-[10px] uppercase tracking-[0.4em] text-[#00E5FF]/60 opacity-0">
+        <p className="hero-cta mb-8 font-mono text-[10px] uppercase tracking-[0.4em] text-[rgba(213,187,139,0.72)] opacity-0">
           Clearwater Vision System · v2.4
         </p>
 
@@ -308,9 +308,9 @@ export default function HeroSection() {
                     height: `${particle.size}px`,
                     background: particle.color,
                     boxShadow:
-                      particle.color === 'rgba(255,255,255,0.95)'
-                        ? '0 0 18px rgba(255,255,255,0.75)'
-                        : '0 0 24px rgba(0,229,255,0.7)',
+                      particle.color === 'rgba(245,241,233,0.95)'
+                        ? '0 0 18px rgba(245,241,233,0.75)'
+                        : '0 0 24px rgba(124,214,204,0.68)',
                   }}
                 />
               ))}
@@ -348,8 +348,8 @@ export default function HeroSection() {
                     fontWeight: 400,
                     fontStyle: 'italic',
                     letterSpacing: '-0.02em',
-                    color: '#00E5FF',
-                    textShadow: '0 0 60px rgba(0,229,255,0.4)',
+                    color: '#8edfd2',
+                    textShadow: '0 0 56px rgba(124,214,204,0.28)',
                   }}
                 >
                   {character}
@@ -371,10 +371,21 @@ export default function HeroSection() {
         <div className="hero-cta mt-12 flex items-center gap-4 opacity-0">
           <a
             href="#upload"
-            className="group relative overflow-hidden rounded-full border border-[#00E5FF]/40 bg-[#00E5FF]/10 px-8 py-3 font-mono text-xs uppercase tracking-[0.2em] text-[#00E5FF] backdrop-blur-sm transition-all duration-300 hover:bg-[#00E5FF]/20 hover:shadow-[0_0_30px_rgba(0,229,255,0.25)]"
+            className="group relative overflow-hidden rounded-full border px-8 py-3 font-mono text-xs uppercase tracking-[0.2em] backdrop-blur-sm transition-all duration-300"
+            style={{
+              borderColor: 'rgba(124,214,204,0.36)',
+              background: 'rgba(124,214,204,0.1)',
+              color: '#b8efe2',
+            }}
           >
             <span className="relative z-10">Dive In</span>
-            <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-[#00E5FF]/10 to-transparent transition-transform duration-500 group-hover:translate-x-full" />
+            <span
+              className="absolute inset-0 -translate-x-full transition-transform duration-500 group-hover:translate-x-full"
+              style={{
+                background:
+                  'linear-gradient(to right, transparent, rgba(213,187,139,0.12), transparent)',
+              }}
+            />
           </a>
           <a
             href="#team"
@@ -390,7 +401,7 @@ export default function HeroSection() {
           Scroll
         </span>
         <div className="h-10 w-px overflow-hidden bg-slate-800">
-          <div className="h-full w-full animate-[scrollLine_1.8s_ease-in-out_infinite] bg-gradient-to-b from-transparent via-[#00E5FF] to-transparent" />
+          <div className="h-full w-full animate-[scrollLine_1.8s_ease-in-out_infinite] bg-gradient-to-b from-transparent via-[#8edfd2] to-transparent" />
         </div>
       </div>
     </section>

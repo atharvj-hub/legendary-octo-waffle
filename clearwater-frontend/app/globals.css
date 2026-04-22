@@ -1,18 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #061018;
-  --bg-deep: #02070c;
-  --panel: rgba(8, 19, 30, 0.78);
-  --panel-strong: rgba(9, 24, 38, 0.92);
-  --line: rgba(110, 195, 255, 0.16);
-  --line-strong: rgba(110, 195, 255, 0.3);
-  --text: #edf7ff;
-  --text-muted: #91a8b9;
-  --accent: #6ec3ff;
-  --accent-strong: #9ce0ff;
-  --accent-soft: rgba(110, 195, 255, 0.16);
-  --success: #6ee7b7;
+  --bg: #071218;
+  --bg-deep: #02070b;
+  --panel: rgba(10, 21, 28, 0.72);
+  --panel-strong: rgba(8, 18, 25, 0.9);
+  --line: rgba(124, 214, 204, 0.14);
+  --line-strong: rgba(124, 214, 204, 0.28);
+  --text: #f5f1e9;
+  --text-muted: #93a7a9;
+  --accent: #7cd6cc;
+  --accent-strong: #b2efe1;
+  --accent-soft: rgba(124, 214, 204, 0.14);
+  --accent-gold: #d5bb8b;
+  --success: #95d5b2;
   --shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
   --frame: min(1180px, calc(100vw - 32px));
 }
@@ -35,9 +36,10 @@ body {
   color: var(--text);
   font-family: var(--font-display), system-ui, sans-serif;
   background:
-    radial-gradient(circle at 20% 18%, rgba(110, 195, 255, 0.09), transparent 24%),
-    radial-gradient(circle at 80% 8%, rgba(110, 195, 255, 0.06), transparent 18%),
-    linear-gradient(180deg, #08131d 0%, #040b11 55%, #02070c 100%);
+    radial-gradient(circle at 18% 14%, rgba(124, 214, 204, 0.1), transparent 24%),
+    radial-gradient(circle at 82% 9%, rgba(213, 187, 139, 0.08), transparent 18%),
+    radial-gradient(circle at 50% 32%, rgba(59, 112, 120, 0.1), transparent 34%),
+    linear-gradient(180deg, #08131a 0%, #061017 42%, #040b10 68%, #02070b 100%);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -52,10 +54,10 @@ body::after {
 
 body::before {
   z-index: 0;
-  opacity: 0.58;
+  opacity: 0.44;
   background-image:
-    linear-gradient(rgba(110, 195, 255, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(110, 195, 255, 0.1) 1px, transparent 1px);
+    linear-gradient(rgba(124, 214, 204, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124, 214, 204, 0.08) 1px, transparent 1px);
   background-size: 64px 64px;
   mask-image: radial-gradient(circle at 50% 18%, black 18%, transparent 82%);
 }
@@ -63,8 +65,8 @@ body::before {
 body::after {
   z-index: 0;
   background:
-    linear-gradient(115deg, transparent 0%, rgba(110, 195, 255, 0.05) 46%, transparent 62%),
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.05), transparent 32%);
+    linear-gradient(115deg, transparent 0%, rgba(124, 214, 204, 0.05) 46%, transparent 62%),
+    radial-gradient(circle at 50% 0%, rgba(213, 187, 139, 0.06), transparent 32%);
   animation: line-sweep 16s linear infinite;
 }
 
@@ -88,6 +90,7 @@ select {
   position: relative;
   z-index: 1;
   min-height: 100vh;
+  isolation: isolate;
 }
 
 .magnetic-zone {
@@ -122,21 +125,21 @@ select {
 }
 
 .magnetic-link--primary {
-  background: linear-gradient(135deg, rgba(110, 195, 255, 0.2), rgba(110, 195, 255, 0.08));
-  border-color: rgba(110, 195, 255, 0.34);
+  background: linear-gradient(135deg, rgba(124, 214, 204, 0.18), rgba(213, 187, 139, 0.08));
+  border-color: rgba(124, 214, 204, 0.28);
   color: var(--text);
-  box-shadow: 0 18px 40px rgba(110, 195, 255, 0.12);
+  box-shadow: 0 18px 40px rgba(124, 214, 204, 0.1);
 }
 
 .magnetic-link--secondary {
-  background: rgba(8, 19, 30, 0.56);
-  border-color: rgba(110, 195, 255, 0.18);
+  background: rgba(8, 19, 30, 0.5);
+  border-color: rgba(124, 214, 204, 0.18);
   color: var(--accent-strong);
 }
 
 .magnetic-link--ghost {
   background: transparent;
-  border-color: rgba(110, 195, 255, 0.12);
+  border-color: rgba(124, 214, 204, 0.1);
   color: var(--text-muted);
 }
 
@@ -144,12 +147,12 @@ select {
 .magnetic-link:focus-visible {
   border-color: var(--line-strong);
   box-shadow:
-    0 0 0 1px rgba(110, 195, 255, 0.14),
-    0 18px 36px rgba(110, 195, 255, 0.14);
+    0 0 0 1px rgba(124, 214, 204, 0.16),
+    0 18px 36px rgba(124, 214, 204, 0.12);
 }
 
 .magnetic-link:focus-visible {
-  outline: 2px solid rgba(156, 224, 255, 0.45);
+  outline: 2px solid rgba(178, 239, 225, 0.42);
   outline-offset: 4px;
 }
 
@@ -176,8 +179,8 @@ select {
   padding: 0 18px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 999px;
-  background: rgba(7, 17, 26, 0.5);
-  color: rgba(226, 232, 240, 0.62);
+  background: rgba(10, 18, 24, 0.52);
+  color: rgba(245, 241, 233, 0.58);
   font-family: var(--font-mono), monospace;
   font-size: 0.62rem;
   letter-spacing: 0.22em;
@@ -189,11 +192,11 @@ select {
   position: relative;
   overflow: hidden;
   border-radius: 999px !important;
-  background: linear-gradient(90deg, #59d8ff 0%, #39e5c1 100%) !important;
-  color: #062733 !important;
+  background: linear-gradient(90deg, #80d8dc 0%, #69d7c5 52%, #90ddb0 100%) !important;
+  color: #082129 !important;
   box-shadow:
-    0 18px 38px rgba(7, 196, 182, 0.16),
-    0 0 34px rgba(0, 229, 255, 0.12),
+    0 18px 38px rgba(75, 164, 149, 0.18),
+    0 0 34px rgba(124, 214, 204, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.24) !important;
 }
 
@@ -208,7 +211,7 @@ select {
 }
 
 .lab-beacon .magnetic-label {
-  color: #0a2230;
+  color: #0a2025;
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.22em;
@@ -229,8 +232,8 @@ select {
 .lab-beacon:hover,
 .lab-beacon:focus-visible {
   box-shadow:
-    0 22px 42px rgba(7, 196, 182, 0.2),
-    0 0 42px rgba(0, 229, 255, 0.18),
+    0 22px 42px rgba(75, 164, 149, 0.22),
+    0 0 42px rgba(124, 214, 204, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.24) !important;
 }
 
