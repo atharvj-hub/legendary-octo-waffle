@@ -1,16 +1,16 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
-import BackgroundFish from '../components/ui/BackgroundFish';
+import { Bebas_Neue, Space_Grotesk } from 'next/font/google';
+import BackgroundBrutalist from '../components/ui/BackgroundBrutalist';
 import Nav from '../components/ui/Nav';
-import './fish.scss';
 import './globals.css';
 
-const geistSans = Geist({
+const bebasNeue = Bebas_Neue({
+  weight: '400',
   variable: '--font-display',
   subsets: ['latin'],
 });
 
-const geistMono = Geist_Mono({
+const spaceGrotesk = Space_Grotesk({
   variable: '--font-mono',
   subsets: ['latin'],
 });
@@ -27,10 +27,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" className={`${bebasNeue.variable} ${spaceGrotesk.variable}`}>
       <body>
         <div className="site-shell">
-          <BackgroundFish />
+          <BackgroundBrutalist />
           <Nav />
           {children}
         </div>
